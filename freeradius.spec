@@ -4,7 +4,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	1.1.2
-Release:	%mkrel 5
+Release:	%mkrel 6
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -21,6 +21,7 @@ Patch5:		freeradius-1.1.2-libdir.diff
 Patch6:		freeradius-1.1.2-avoid-version.diff
 Patch8:		freeradius-1.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
+Patch10:	freeradius-1.1.2-CVE-2007-2028.patch
 BuildRequires:	krb5-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	libtool-devel
@@ -148,6 +149,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch6 -p1
 %patch8 -p1 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
+%patch10 -p1 -b .cve-2007-2028
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
@@ -411,5 +413,3 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %endif
 %{_includedir}/%{name}
 %{_libdir}/%{name}/*.a
-
-
