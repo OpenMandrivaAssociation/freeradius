@@ -3,25 +3,23 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	1.1.2
-Release:	%mkrel 6
+Version:	1.1.6
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.bz2
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.bz2.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Patch0:		freeradius-0.9.2-config.patch
-Patch3:		freeradius-1.1.2-a_libtool14_to_call_your_own.diff
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch5:		freeradius-1.1.2-libdir.diff
 Patch6:		freeradius-1.1.2-avoid-version.diff
 Patch8:		freeradius-1.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
-Patch10:	freeradius-1.1.2-CVE-2007-2028.patch
 BuildRequires:	krb5-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	libtool-devel
@@ -143,13 +141,11 @@ find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
 %patch0 -p0
-%patch3 -p1
 %patch4 -p1 -b .peroyvind
 %patch5 -p1
 %patch6 -p1
 %patch8 -p1 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
-%patch10 -p1 -b .cve-2007-2028
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
@@ -339,7 +335,6 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/users
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/eap.conf
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/otp.conf
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/otppasswd.sample
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sqlippool.conf
 %config(noreplace) %attr(-,root,root) %{_sysconfdir}/raddb/certs/*
 
