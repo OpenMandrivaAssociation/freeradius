@@ -4,7 +4,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	1.1.6
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -165,11 +165,12 @@ cp %{SOURCE5} Mandriva/%{name}.logrotate
 find -type f -name "configure*" | xargs perl -pi -e "s|/lib\b|/%{_lib}|g"
 
 %build
+%serverbuild
 # use bundled libtool...
 %define __libtoolize /bin/true
 
-export CFLAGS="%{optflags} -fPIC -DLDAP_DEPRECATED"
-export CXXFLAGS="%{optflags} -fPIC -DLDAP_DEPRECATED"
+export CFLAGS="$CFLAGS -fPIC -DLDAP_DEPRECATED"
+export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
 
 %configure \
     --with-gnu-ld \
