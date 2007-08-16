@@ -1,15 +1,15 @@
 %define major 1
 %define libname %mklibname freeradius %{major}
 
-Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	1.1.6
-Release:	%mkrel 2
+Version:	1.1.7
+Release:	%mkrel 1
+Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.bz2
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.bz2.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
@@ -127,7 +127,6 @@ Provides:	freeradius-devel
 Development headers and libraries for %{name}
 
 %prep
-
 %setup -q -n %{name}-%{version}
 
 # clean up CVS stuff
@@ -172,7 +171,7 @@ find -type f -name "configure*" | xargs perl -pi -e "s|/lib\b|/%{_lib}|g"
 export CFLAGS="$CFLAGS -fPIC -DLDAP_DEPRECATED"
 export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
 
-%configure \
+%configure2_5x \
     --with-gnu-ld \
     --with-threads \
     --with-thread-pool \
@@ -337,6 +336,7 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/eap.conf
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/otp.conf
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sqlippool.conf
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/postgresqlippool.conf
 %config(noreplace) %attr(-,root,root) %{_sysconfdir}/raddb/certs/*
 
 %{_bindir}/rad*
