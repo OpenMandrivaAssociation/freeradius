@@ -1,5 +1,6 @@
 %define major 1
 %define libname %mklibname freeradius %{major}
+%define _requires_exceptions perl(DBI)
 
 Name:		freeradius
 Version:	1.1.7
