@@ -231,7 +231,7 @@ make install R=%{buildroot}
 # install headers
 %__install -m0644 src/include/*  %{buildroot}%{_includedir}/%{name}/
 
-# install mandrake scripts and stuff...
+# install Mandriva scripts and stuff...
 %__install -m0644 Mandriva/%{name}.pam %{buildroot}%{_sysconfdir}/pam.d/radiusd
 %__install -m0644 Mandriva/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
 %__install -m0755 Mandriva/%{name}.init %{buildroot}%{_initrddir}/radiusd
