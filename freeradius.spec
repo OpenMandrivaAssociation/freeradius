@@ -45,6 +45,7 @@ Requires(postun): rpm-helper
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	radiusd-cistron
+BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 
 %description
 The FreeRADIUS Server Project is a high-performance and highly
