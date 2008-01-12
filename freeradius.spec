@@ -4,7 +4,7 @@
 
 Name:		freeradius
 Version:	1.1.7
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
