@@ -3,23 +3,22 @@
 %define _requires_exceptions perl(DBI)
 
 Name:		freeradius
-Version:	1.1.7
-Release:	%mkrel 3
+Version:	2.0.0
+Release:	%mkrel 1
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
-Patch0:		freeradius-0.9.2-config.patch
+Patch0:		freeradius-2.0.0-config.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
-Patch5:		freeradius-1.1.2-libdir.diff
-Patch6:		freeradius-1.1.2-avoid-version.diff
-Patch8:		freeradius-1.0.0-samba3.patch
+Patch6:		freeradius-2.0.0-avoid-version.patch
+Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
 BuildRequires:	krb5-devel
 BuildRequires:	gdbm-devel
@@ -37,10 +36,12 @@ BuildRequires:	postgresql-devel
 BuildRequires:	zlib-devel
 BuildRequires:	python-devel
 Requires:	net-snmp-utils
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+# minimal version for ssl cert generation
+Requires(post): openssl
+Requires(post): rpm-helper >= 0.19
+Requires(preun): rpm-helper >= 0.19
+Requires(pre): rpm-helper >= 0.19
+Requires(postun): rpm-helper >= 0.19
 %if %mdkversion >= 1020
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
@@ -128,7 +129,7 @@ Provides:	freeradius-devel
 Development headers and libraries for %{name}
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-server-%{version}
 
 # clean up CVS stuff
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
@@ -140,10 +141,9 @@ find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
-%patch0 -p0
+%patch0 -p1 -b .config
 %patch4 -p1 -b .peroyvind
-%patch5 -p1
-%patch6 -p1
+%patch6 -p1 -b .avoid-version
 %patch8 -p1 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
 
@@ -238,7 +238,7 @@ make install R=%{buildroot}
 
 # put the mibs in place
 %__install -d %{buildroot}%{_datadir}/snmp/mibs
-%__install -m0644 mibs/GNOME* mibs/RADIUS* %{buildroot}%{_datadir}/snmp/mibs/
+%__install -m0644 mibs/RADIUS* %{buildroot}%{_datadir}/snmp/mibs/
 
 # fix ghostfiles
 touch %{buildroot}/var/log/radius/radutmp
@@ -247,9 +247,10 @@ touch %{buildroot}/var/log/radius/radius.log
 
 # remove unneeded stuff
 %__rm -f %{buildroot}%{_sbindir}/rc.radiusd
-%__rm -f %{buildroot}%{_sysconfdir}/raddb/mssql.conf
-%__rm -f %{buildroot}%{_sysconfdir}/raddb/oraclesql.conf
 %__rm -f %{buildroot}%{_includedir}/%{name}/Makefile
+%__rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/mssql
+%__rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/oracle
+%__rm -f %{buildroot}%{_sysconfdir}/raddb/certs/*
 
 # remove faulty perl file...
 %__rm -f %{buildroot}%{_libdir}/%{name}/rlm_perl.a
@@ -268,9 +269,6 @@ touch %{buildroot}/var/log/radius/radius.log
 %__cp doc/rlm_krb5 .
 %__cp doc/RADIUS*.schema .
 %__cp doc/rlm_ldap .
-
-# fix the naming of the sql.conf file
-%__mv %{buildroot}%{_sysconfdir}/raddb/sql.conf %{buildroot}%{_sysconfdir}/raddb/mysql.conf
 
 # nuke useless dupes
 rm -f %{buildroot}%{_libdir}/%{name}/*%{version}*.la
@@ -294,6 +292,13 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %create_ghostfile /var/log/radius/radutmp radius radius 0644
 %create_ghostfile /var/log/radius/radwtmp radius radius 0644
 %create_ghostfile /var/log/radius/radius.log radius radius 0644
+%create_ssl_certificate radiusd no radius
+if [ $1 = 1 ]; then
+    openssl dhparam -out  %{_sysconfdir}/raddb/certs/dh 1024 2>&1 >/dev/
+    null
+    dd if=/dev/urandom of=%{_sysconfdir}/raddb/certs/random count=10 2>&1 >/dev/null
+    chgrp radius %{_sysconfdir}/raddb/certs/random
+fi
 
 %preun
 %_preun_service radiusd
@@ -310,7 +315,6 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %doc README.sql README.smb Readme.cram Standard.draft dictionary.sandy
 
 %attr(0755,radius,radius) %dir %{_sysconfdir}/raddb
-%attr(0755,radius,radius) %dir %{_sysconfdir}/raddb/certs
 
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/pam.d/radiusd
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/radiusd
@@ -318,27 +322,33 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/acct_users
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.access_reject
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.accounting_response
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.pre-proxy
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/dictionary*
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/experimental.conf
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/example.pl
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/hints
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/huntgroups
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/naslist
-#%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/persistent.pl
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/radiusd.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/realms
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/clients
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/clients.conf
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/naspasswd
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/policy.conf
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/policy.txt
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/preproxy_users
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/proxy.conf
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/snmp.conf
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/users
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/eap.conf
 %config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/otp.conf
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sql.conf
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sqlippool.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/postgresqlippool.conf
-%config(noreplace) %attr(-,root,root) %{_sysconfdir}/raddb/certs/*
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/templates.conf
+
+%dir %attr(0755,root,root) %{_sysconfdir}/raddb/certs
+%dir %attr(0755,root,root) %{_sysconfdir}/raddb/sites-available
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sites-available/*
+%dir %attr(0755,root,root) %{_sysconfdir}/raddb/sites-enabled
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sites-enabled/*
 
 %{_bindir}/rad*
 %{_bindir}/rlm_*
@@ -370,15 +380,13 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 
 %files -n %{libname}-postgresql
 %defattr(-,root,root)
-%doc doc/examples/postgresql.sql
 %doc src/billing
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/postgresql.conf
+%config(noreplace) %{_sysconfdir}/raddb/sql/postgresql
 %{_libdir}/%{name}/rlm_sql_postgresql*.so*
 
 %files -n %{libname}-mysql
 %defattr(-,root,root)
-%doc doc/examples/mysql.sql
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/mysql.conf
+%config(noreplace) %{_sysconfdir}/raddb/sql/mysql
 %{_libdir}/%{name}/rlm_sql_mysql*.so*
 
 %files -n %{libname}-unixODBC
@@ -387,10 +395,10 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 
 %files -n %{libname}
 %defattr(-,root,root)
-%{_libdir}/%{name}/libradius*.la
-%{_libdir}/%{name}/libradius*.so
-%{_libdir}/%{name}/libeap.la
-%{_libdir}/%{name}/libeap*.so
+%{_libdir}/%{name}/libfreeradius-radius*.la
+%{_libdir}/%{name}/libfreeradius-radius*.so
+%{_libdir}/%{name}/libfreeradius-eap.la
+%{_libdir}/%{name}/libfreeradius-eap*.so
 %{_libdir}/%{name}/rlm_*.la
 %{_libdir}/%{name}/rlm_*.so
 
