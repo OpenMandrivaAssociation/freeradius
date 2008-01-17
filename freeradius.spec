@@ -1,5 +1,6 @@
 %define major 1
 %define libname %mklibname freeradius %{major}
+%define develname %mklibname -d freeradius
 %define _requires_exceptions perl(DBI)
 
 Name:		freeradius
@@ -117,14 +118,15 @@ Group:		System/Libraries
 %description -n	%{libname}
 Libraries for %{name}
 
-%package -n	%{libname}-devel
+%package -n	%{develname}
 Summary:	Development headers for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
+Obsoletes:	%{mklibname -d %{name} 1}
 Obsoletes:	freeradius-devel
 Provides:	freeradius-devel
 
-%description -n	%{libname}-devel
+%description -n	%{develname}
 Development headers and libraries for %{name}
 
 %prep
@@ -408,7 +410,7 @@ fi
 %exclude %{_libdir}/%{name}/rlm_krb5*
 %exclude %{_libdir}/%{name}/rlm_ldap*
 
-%files -n %{libname}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %doc todo
 %if %mdkversion >= 1020
