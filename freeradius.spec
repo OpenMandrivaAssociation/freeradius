@@ -113,7 +113,6 @@ do accounting, and this module is necessary for that.
 %package -n	%{libname}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
-Requires:	%{name} = %{version}
 
 %description -n	%{libname}
 Libraries for %{name}
@@ -121,7 +120,7 @@ Libraries for %{name}
 %package -n	%{libname}-devel
 Summary:	Development headers for %{name}
 Group:		Development/C
-Requires:	%{name} = %{version}
+Requires:	%{libname} = %{version}-%{release}
 Obsoletes:	freeradius-devel
 Provides:	freeradius-devel
 
