@@ -127,11 +127,6 @@ Development headers and libraries for %{name}
 %prep
 %setup -q -n %{name}-server-%{version}
 
-# clean up CVS stuff
-for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
-    if [ -e "$i" ]; then rm -r $i; fi >&/dev/null
-done
-
 # fix strange perms
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
@@ -156,9 +151,6 @@ cp %{SOURCE3} Mandriva/freeradius.pam
 %endif
 cp %{SOURCE4} Mandriva/%{name}.init
 cp %{SOURCE5} Mandriva/%{name}.logrotate
-
-# lib64 fixes
-find -type f -name "configure*" | xargs perl -pi -e "s|/lib\b|/%{_lib}|g"
 
 %build
 %serverbuild
