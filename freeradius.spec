@@ -55,59 +55,54 @@ configurable GPL'd RADIUS server. It is somewhat similar to the
 Livingston 2.0 RADIUS server, but has many more features, and is
 much more configurable.
 
-%package -n	%{libname}-krb5
+%package -n	%{name}-krb5
 Summary:	The Kerberos module for %{name}
 Group:		System/Servers
 Requires:	krb5-libs
-Requires:	%{name} = %{version}
-Obsoletes:	freeradius-krb5
-Provides:	freeradius-krb5
+Requires:	%{name} = %{version}-%{version}
+Obsoletes:	%{libname}-krb5
 
-%description -n	%{libname}-krb5
+%description -n	%{name}-krb5
 The FreeRADIUS server can use Kerberos to authenticate users, and
 this module is necessary for that.
 
-%package -n	%{libname}-ldap
+%package -n	%{name}-ldap
 Summary:	The LDAP module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Obsoletes:	freeradius-ldap
-Provides:	freeradius-ldap
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{libname}-ldap
 
-%description -n	%{libname}-ldap
+%description -n	%{name}-ldap
 The FreeRADIUS server can use LDAP to authenticate users, and this
 module is necessary for that.
 
-%package -n	%{libname}-postgresql
+%package -n	%{name}-postgresql
 Summary:	The PostgreSQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Obsoletes:	freeradius-postgresql
-Provides:	freeradius-postgresql
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{libname}-postgresql
 
-%description -n	%{libname}-postgresql
+%description -n	%{name}-postgresql
 The FreeRADIUS server can use PostgreSQL to authenticate users and
 do accounting, and this module is necessary for that.
 
-%package -n	%{libname}-mysql
+%package -n	%{name}-mysql
 Summary:	The MySQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Obsoletes:	freeradius-mysql
-Provides:	freeradius-mysql
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{libname}-mysql
 
-%description -n	%{libname}-mysql
+%description -n	%{name}-mysql
 The FreeRADIUS server can use MySQL to authenticate users and do
 accounting, and this module is necessary for that.
 
-%package -n	%{libname}-unixODBC
+%package -n	%{name}-unixODBC
 Summary:	The unixODBC module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}
-Obsoletes:	freeradius-unixODBC
-Provides:	freeradius-unixODBC
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{libname}-unixODBC
 
-%description -n	%{libname}-unixODBC
+%description -n	%{name}-unixODBC
 The FreeRADIUS server can use unixODBC to authenticate users and
 do accounting, and this module is necessary for that.
 
@@ -367,30 +362,30 @@ fi
 %{_datadir}/freeradius
 %attr(0644,root,root) %{_mandir}/man*/*
 
-%files -n %{libname}-krb5
+%files -n %{name}-krb5
 %defattr(-,root,root)
 %doc rlm_krb5
 %{_libdir}/%{name}/rlm_krb5*.so*
 
-%files -n %{libname}-ldap
+%files -n %{name}-ldap
 %defattr(-,root,root)
 %doc RADIUS*.schema rlm_ldap doc/examples/openldap.schema
 
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/ldap.attrmap
 %{_libdir}/%{name}/rlm_ldap*.so*
 
-%files -n %{libname}-postgresql
+%files -n %{name}-postgresql
 %defattr(-,root,root)
 %doc src/billing
 %config(noreplace) %{_sysconfdir}/raddb/sql/postgresql
 %{_libdir}/%{name}/rlm_sql_postgresql*.so*
 
-%files -n %{libname}-mysql
+%files -n %{name}-mysql
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/raddb/sql/mysql
 %{_libdir}/%{name}/rlm_sql_mysql*.so*
 
-%files -n %{libname}-unixODBC
+%files -n %{name}-unixODBC
 %defattr(-,root,root)
 %{_libdir}/%{name}/rlm_sql_unixodbc*.so*
 
