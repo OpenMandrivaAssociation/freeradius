@@ -5,7 +5,7 @@
 
 Name:		freeradius
 Version:	2.0.0
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
@@ -39,7 +39,7 @@ BuildRequires:	python-devel
 Requires:	net-snmp-utils
 # minimal version for ssl cert generation
 Requires(post): openssl
-Requires(post): rpm-helper >= 0.19
+Requires(post): rpm-helper >= 0.21
 Requires(preun): rpm-helper >= 0.19
 Requires(pre): rpm-helper >= 0.19
 Requires(postun): rpm-helper >= 0.19
@@ -280,7 +280,7 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %create_ghostfile /var/log/radius/radutmp radius radius 0644
 %create_ghostfile /var/log/radius/radwtmp radius radius 0644
 %create_ghostfile /var/log/radius/radius.log radius radius 0644
-%create_ssl_certificate radiusd no radius
+%_create_ssl_certificate radiusd -g radius
 if [ $1 = 1 ]; then
     openssl dhparam -out  %{_sysconfdir}/raddb/certs/dh 1024 2>&1 >/dev/
     null
