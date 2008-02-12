@@ -282,8 +282,7 @@ rm -rf  %{buildroot}%{_docdir}/%{name}
 %create_ghostfile /var/log/radius/radius.log radius radius 0644
 %_create_ssl_certificate radiusd -g radius
 if [ $1 = 1 ]; then
-    openssl dhparam -out  %{_sysconfdir}/raddb/certs/dh 1024 2>&1 >/dev/
-    null
+    openssl dhparam -out  %{_sysconfdir}/raddb/certs/dh 1024 2>&1 >/dev/null
     dd if=/dev/urandom of=%{_sysconfdir}/raddb/certs/random count=10 2>&1 >/dev/null
     chgrp radius %{_sysconfdir}/raddb/certs/random
 fi
