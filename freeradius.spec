@@ -36,6 +36,7 @@ BuildRequires:	pam-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	zlib-devel
 BuildRequires:	python-devel
+BuildRequires:	rpm-helper >= 0.21
 Requires:	net-snmp-utils
 # minimal version for ssl cert generation
 Requires(post): openssl
