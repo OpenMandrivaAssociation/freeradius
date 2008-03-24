@@ -5,7 +5,7 @@
 
 Name:		freeradius
 Version:	2.0.0
-Release:	%mkrel 5
+Release:	%mkrel 6
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
@@ -60,7 +60,7 @@ much more configurable.
 Summary:	The Kerberos module for %{name}
 Group:		System/Servers
 Requires:	krb5-libs
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-krb5
 
 %description -n	%{name}-krb5
