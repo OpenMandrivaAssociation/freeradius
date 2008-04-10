@@ -5,7 +5,7 @@
 
 Name:		freeradius
 Version:	2.0.0
-Release:	%mkrel 6
+Release:	%mkrel 7
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
@@ -16,6 +16,7 @@ Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
+Source6:	freeradius.sysconfig
 Patch0:		freeradius-2.0.0-config.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-2.0.0-avoid-version.patch
@@ -211,6 +212,7 @@ make
 
 %__install -d %{buildroot}%{_sysconfdir}/logrotate.d
 %__install -d %{buildroot}%{_sysconfdir}/pam.d
+%__install -d %{buildroot}%{_sysconfdir}/sysconfig
 %__install -d %{buildroot}%{_initrddir}
 %__install -d %{buildroot}/var/run/radiusd
 %__install -d %{buildroot}%{_includedir}/%{name}
@@ -224,6 +226,7 @@ make install R=%{buildroot}
 %__install -m0644 Mandriva/%{name}.pam %{buildroot}%{_sysconfdir}/pam.d/radiusd
 %__install -m0644 Mandriva/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
 %__install -m0755 Mandriva/%{name}.init %{buildroot}%{_initrddir}/radiusd
+%__install -m0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/radiusd
 
 # put the mibs in place
 %__install -d %{buildroot}%{_datadir}/snmp/mibs
@@ -306,6 +309,7 @@ fi
 
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/pam.d/radiusd
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/radiusd
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/sysconfig/radiusd
 %attr(0755,root,root) %{_initrddir}/radiusd
 
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/acct_users
