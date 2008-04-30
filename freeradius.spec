@@ -4,8 +4,8 @@
 %define _requires_exceptions perl(DBI)
 
 Name:		freeradius
-Version:	2.0.0
-Release:	%mkrel 8
+Version:	2.0.3
+Release:	%mkrel 1
 Summary:	High-performance and highly configurable RADIUS server
 License:	GPL
 Group:		System/Servers
@@ -305,42 +305,42 @@ fi
 %doc doc COPYRIGHT CREDITS INSTALL LICENSE README
 %doc README.sql README.smb Readme.cram Standard.draft dictionary.sandy
 
-%attr(0755,radius,radius) %dir %{_sysconfdir}/raddb
 
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/pam.d/radiusd
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/radiusd
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/sysconfig/radiusd
-%attr(0755,root,root) %{_initrddir}/radiusd
-
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/acct_users
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.access_reject
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.accounting_response
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/attrs.pre-proxy
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/dictionary*
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/experimental.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/example.pl
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/hints
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/huntgroups
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/radiusd.conf
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/clients.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/policy.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/policy.txt
+%{_initrddir}/radiusd
+%config(noreplace) %{_sysconfdir}/pam.d/radiusd
+%config(noreplace) %{_sysconfdir}/logrotate.d/radiusd
+%config(noreplace)  %{_sysconfdir}/sysconfig/radiusd
+%dir %{_sysconfdir}/raddb
+%config(noreplace) %{_sysconfdir}/raddb/acct_users
+%config(noreplace) %{_sysconfdir}/raddb/attrs
+%config(noreplace) %{_sysconfdir}/raddb/attrs.access_reject
+%config(noreplace) %{_sysconfdir}/raddb/attrs.accounting_response
+%config(noreplace) %{_sysconfdir}/raddb/attrs.pre-proxy
+%config(noreplace) %{_sysconfdir}/raddb/dictionary*
+%config(noreplace) %{_sysconfdir}/raddb/experimental.conf
+%config(noreplace) %{_sysconfdir}/raddb/example.pl
+%config(noreplace) %{_sysconfdir}/raddb/hints
+%config(noreplace) %{_sysconfdir}/raddb/huntgroups
+%config(noreplace) %{_sysconfdir}/raddb/radiusd.conf
+%config(noreplace) %{_sysconfdir}/raddb/policy.conf
+%config(noreplace) %{_sysconfdir}/raddb/policy.txt
+%config(noreplace) %{_sysconfdir}/raddb/proxy.conf
+%config(noreplace) %{_sysconfdir}/raddb/snmp.conf
+%config(noreplace) %{_sysconfdir}/raddb/eap.conf
+%config(noreplace) %{_sysconfdir}/raddb/otp.conf
+%config(noreplace) %{_sysconfdir}/raddb/sql.conf
+%config(noreplace) %{_sysconfdir}/raddb/sqlippool.conf
+%config(noreplace) %{_sysconfdir}/raddb/templates.conf
+# those contains passwords
+%config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/clients.conf
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/preproxy_users
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/proxy.conf
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/snmp.conf
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/users
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/eap.conf
-%config(noreplace) %attr(0640,root,root) %{_sysconfdir}/raddb/otp.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sql.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sqlippool.conf
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/templates.conf
 
-%dir %attr(0755,root,root) %{_sysconfdir}/raddb/certs
-%dir %attr(0755,root,root) %{_sysconfdir}/raddb/sites-available
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sites-available/*
-%dir %attr(0755,root,root) %{_sysconfdir}/raddb/sites-enabled
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/sites-enabled/*
+%dir %{_sysconfdir}/raddb/certs
+%dir %{_sysconfdir}/raddb/sites-available
+%dir %{_sysconfdir}/raddb/sites-enabled
+%config(noreplace) %{_sysconfdir}/raddb/sites-available/*
+%config(noreplace) %{_sysconfdir}/raddb/sites-enabled/*
 
 %{_bindir}/rad*
 %{_bindir}/rlm_*
@@ -354,9 +354,9 @@ fi
 %attr(0644,radius,radius) %ghost /var/log/radius/radutmp
 %attr(0644,radius,radius) %ghost /var/log/radius/radwtmp
 %attr(0644,radius,radius) %ghost /var/log/radius/radius.log
-%attr(0644,root,root) %{_datadir}/snmp/mibs/*
+%{_datadir}/snmp/mibs/*
 %{_datadir}/freeradius
-%attr(0644,root,root) %{_mandir}/man*/*
+%{_mandir}/man*/*
 
 %files -n %{name}-krb5
 %defattr(-,root,root)
@@ -366,8 +366,7 @@ fi
 %files -n %{name}-ldap
 %defattr(-,root,root)
 %doc RADIUS*.schema rlm_ldap doc/examples/openldap.schema
-
-%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/raddb/ldap.attrmap
+%config(noreplace) %{_sysconfdir}/raddb/ldap.attrmap
 %{_libdir}/%{name}/rlm_ldap*.so*
 
 %files -n %{name}-postgresql
