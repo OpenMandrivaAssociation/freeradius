@@ -1,27 +1,30 @@
+%define _disable_ld_no_undefined 1
+
 %define major 1
 %define libname %mklibname freeradius %{major}
 %define develname %mklibname -d freeradius
 %define _requires_exceptions perl(DBI)
 
-Name:		freeradius
-Version:	2.0.3
-Release:	%mkrel 2
 Summary:	High-performance and highly configurable RADIUS server
+Name:		freeradius
+Version:	2.0.5
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
-Patch0:		freeradius-2.0.0-config.patch
+Patch0:		freeradius-config.diff
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
+Patch10:	freeradius-server-linkage_fix.diff
 BuildRequires:	krb5-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	libtool-devel
@@ -49,7 +52,7 @@ Requires(postun): rpm-helper >= 0.19
 BuildRequires:	multiarch-utils >= 1.0.3
 %endif
 Conflicts:	radiusd-cistron
-BuildRoot:	%{_tmppath}/%{name}-%{version}-root
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The FreeRADIUS Server Project is a high-performance and highly
@@ -139,6 +142,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch6 -p1 -b .avoid-version
 %patch8 -p1 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
+%patch10 -p0 -b .linkage_fix
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
@@ -341,6 +345,8 @@ fi
 %dir %{_sysconfdir}/raddb/sites-enabled
 %config(noreplace) %{_sysconfdir}/raddb/sites-available/*
 %config(noreplace) %{_sysconfdir}/raddb/sites-enabled/*
+%dir %{_sysconfdir}/raddb/modules
+%config(noreplace) %{_sysconfdir}/raddb/modules/*
 
 %{_bindir}/rad*
 %{_bindir}/rlm_*
