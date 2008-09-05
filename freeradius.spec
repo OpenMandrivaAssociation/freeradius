@@ -7,7 +7,7 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.0.5
+Version:	2.1.0
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
@@ -34,14 +34,11 @@ BuildRequires:	libsasl-devel
 BuildRequires:	openldap-devel
 BuildRequires:	libtool
 BuildRequires:	unixODBC-devel
-BuildRequires:	net-snmp
-BuildRequires:	net-snmp-utils
 BuildRequires:	pam-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	zlib-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-helper >= 0.21
-Requires:	net-snmp-utils
 # minimal version for ssl cert generation
 Requires(post): openssl
 Requires(post): rpm-helper >= 0.21
@@ -179,7 +176,6 @@ export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
     --with-ltdl-include=%{_includedir} \
     --with-radacctdir=%{_var}/log/radius/radacct \
     --with-raddbdir=%{_sysconfdir}/raddb \
-    --with-snmp \
     --with-static-modules="" \
     --with-experimental-modules \
     --with-large-files \
@@ -329,7 +325,6 @@ fi
 %config(noreplace) %{_sysconfdir}/raddb/policy.conf
 %config(noreplace) %{_sysconfdir}/raddb/policy.txt
 %config(noreplace) %{_sysconfdir}/raddb/proxy.conf
-%config(noreplace) %{_sysconfdir}/raddb/snmp.conf
 %config(noreplace) %{_sysconfdir}/raddb/eap.conf
 %config(noreplace) %{_sysconfdir}/raddb/otp.conf
 %config(noreplace) %{_sysconfdir}/raddb/sql.conf
