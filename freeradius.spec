@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -45,17 +45,13 @@ Requires(post): rpm-helper >= 0.21
 Requires(preun): rpm-helper >= 0.19
 Requires(pre): rpm-helper >= 0.19
 Requires(postun): rpm-helper >= 0.19
-%if %mdkversion >= 1020
-BuildRequires:	multiarch-utils >= 1.0.3
-%endif
 Conflicts:	radiusd-cistron
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
-The FreeRADIUS Server Project is a high-performance and highly
-configurable GPL'd RADIUS server. It is somewhat similar to the
-Livingston 2.0 RADIUS server, but has many more features, and is
-much more configurable.
+The FreeRADIUS Server Project is a high-performance and highly configurable
+GPL'd RADIUS server. It is somewhat similar to the Livingston 2.0 RADIUS
+server, but has many more features, and is much more configurable.
 
 %package -n	%{name}-krb5
 Summary:	The Kerberos module for %{name}
@@ -65,8 +61,8 @@ Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-krb5
 
 %description -n	%{name}-krb5
-The FreeRADIUS server can use Kerberos to authenticate users, and
-this module is necessary for that.
+The FreeRADIUS server can use Kerberos to authenticate users, and this module
+is necessary for that.
 
 %package -n	%{name}-ldap
 Summary:	The LDAP module for %{name}
@@ -75,8 +71,8 @@ Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-ldap
 
 %description -n	%{name}-ldap
-The FreeRADIUS server can use LDAP to authenticate users, and this
-module is necessary for that.
+The FreeRADIUS server can use LDAP to authenticate users, and this module is
+necessary for that.
 
 %package -n	%{name}-postgresql
 Summary:	The PostgreSQL module for %{name}
@@ -85,8 +81,8 @@ Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-postgresql
 
 %description -n	%{name}-postgresql
-The FreeRADIUS server can use PostgreSQL to authenticate users and
-do accounting, and this module is necessary for that.
+The FreeRADIUS server can use PostgreSQL to authenticate users and do
+accounting, and this module is necessary for that.
 
 %package -n	%{name}-mysql
 Summary:	The MySQL module for %{name}
@@ -95,8 +91,8 @@ Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-mysql
 
 %description -n	%{name}-mysql
-The FreeRADIUS server can use MySQL to authenticate users and do
-accounting, and this module is necessary for that.
+The FreeRADIUS server can use MySQL to authenticate users and do accounting,
+and this module is necessary for that.
 
 %package -n	%{name}-unixODBC
 Summary:	The unixODBC module for %{name}
@@ -105,8 +101,8 @@ Requires:	%{name} = %{version}-%{release}
 Obsoletes:	%{libname}-unixODBC
 
 %description -n	%{name}-unixODBC
-The FreeRADIUS server can use unixODBC to authenticate users and
-do accounting, and this module is necessary for that.
+The FreeRADIUS server can use unixODBC to authenticate users and do accounting,
+and this module is necessary for that.
 
 %package -n	%{libname}
 Summary:	Libraries for %{name}
@@ -120,13 +116,36 @@ Summary:	Development headers for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
 Obsoletes:	%{mklibname -d %{name} 1}
+Provides:	freeradius-devel = %{version}-%{release}
 Obsoletes:	freeradius-devel
-Provides:	freeradius-devel
 
 %description -n	%{develname}
 Development headers and libraries for %{name}
 
+%package -n	%{name}-web
+Summary:	Web based administration interface for freeradius
+Group:		System/Servers
+Requires:	apache-mod_php
+Requires:	freeradius
+Requires:	php-mysql
+Requires:	net-snmp-mibs
+Requires:	net-snmp-utils
+# webapp macros and scriptlets
+Requires(post):	 rpm-helper >= 0.16
+Requires(postun): rpm-helper >= 0.16
+BuildRequires:	rpm-helper >= 0.16
+BuildRequires:	rpm-mandriva-setup >= 1.23
+Provides:	dialup_admin = %{version}-%{release}
+Obsoletes:	dialup_admin
+
+%description -n	%{name}-web
+dialup_admin is a web based administration interface for the freeradius radius
+server. It is written in PHP4. It is modular and right now it assumes that user
+information is stored in an ldap server or an sql database and accounting in an
+sql server.
+
 %prep
+
 %setup -q -n %{name}-server-%{version}
 
 # fix strange perms
@@ -155,8 +174,20 @@ cp %{SOURCE3} Mandriva/freeradius.pam
 cp %{SOURCE4} Mandriva/%{name}.init
 cp %{SOURCE5} Mandriva/%{name}.logrotate
 
+# fix path
+find . -type f | xargs perl -pi -e "s|/usr/local/bin|%{_bindir}|g"
+
+# move php3 to php
+find dialup_admin -name '*.php3' | while read php3; do
+    mv $php3 ${php3%%.php3}.php
+done
+
+find dialup_admin -type f | xargs perl -pi -e "s|\.php3|\.php|g"
+perl -pi -e "s|\\\${bindir}|\\\${bindir}/|g" dialup_admin/Makefile
+
 %build
 %serverbuild
+
 # use bundled libtool...
 %define __libtoolize /bin/true
 
@@ -208,7 +239,7 @@ perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr
 make
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %__install -d %{buildroot}%{_sysconfdir}/logrotate.d
 %__install -d %{buildroot}%{_sysconfdir}/pam.d
@@ -273,8 +304,67 @@ perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" %{buildroot}%{_libdir}/%{name}/*.
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/radpaths.h
 %endif
 
+# the web cruft
+install -d %{buildroot}/var/www/%{name}-web
+install -d %{buildroot}%{_sysconfdir}/%{name}-web
+
+pushd dialup_admin
+make \
+    DIALUP_PREFIX=%{buildroot}/var/www/freeradius-web \
+    DIALUP_DOCDIR=%{buildroot}%{_docdir}/freeradius-web \
+    DIALUP_CONFDIR=%{buildroot}%{_sysconfdir}/freeradius-web \
+    install
+popd
+
+find %{buildroot}/var/www/freeradius-web | xargs perl -pi -e "s|%{buildroot}||g"
+find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi -e "s|%{buildroot}||g"
+find %{buildroot}/var/www/freeradius-web | xargs perl -pi -e "s|\.\./conf/config\.php|%{_sysconfdir}/freeradius-web/config\.php|g"
+find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi -e "s|\.\./conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g"
+
+perl -pi -e "s|/data/local/dialupadmin/conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g" %{buildroot}/var/www/freeradius-web/bin/*
+perl -pi -e "s|/logs/radiusd/accounting|/var/log/radius/accounting|g"  %{buildroot}/var/www/freeradius-web/bin/*
+
+mv %{buildroot}/var/www/freeradius-web/bin/* %{buildroot}%{_bindir}/
+mv %{buildroot}%{_bindir}/snmpfinger %{buildroot}%{_bindir}/freeradius-web-snmpfinger
+
+# fix a simple redirector
+cat > %{buildroot}/var/www/%{name}-web/index.html << EOF
+<html>
+<head>
+<title></title>
+<meta HTTP-EQUIV="REFRESH" CONTENT="0; URL=htdocs/index.html">
+</head>
+<body>
+</body>
+</html>
+EOF
+
+# apache configuration
+install -d %{buildroot}%{_webappconfdir}
+cat > %{buildroot}%{_webappconfdir}/%{name}-web.conf <<EOF
+# %{name} Apache configuration
+Alias /%{name}-web %{_var}/www/%{name}-web
+
+<Directory %{_var}/www/%{name}-web>
+    Allow from all
+</Directory>
+EOF
+
+# cron stuff
+install -d %{buildroot}%{_sysconfdir}/cron.d
+cat > %{buildroot}%{_sysconfdir}/cron.d/%{name}-web <<EOF
+1 0 * * * %{_bindir}/tot_stats >/dev/null 2>&1
+5 0 * * * %{_bindir}/monthly_tot_stats >/dev/null 2>&1
+10 0 1 * * %{_bindir}/truncate_radacct >/dev/null 2>&1
+15 0 1 * * %{_bindir}/clean_radacct >/dev/null 2>&1
+EOF
+
 # cleanup
-rm -rf  %{buildroot}%{_docdir}/%{name}
+rm -rf %{buildroot}%{_docdir}/%{name}
+rm -rf %{buildroot}%{_docdir}/freeradius-web
+rm -rf %{buildroot}/var/www/freeradius-web/bin
+rm -rf %{buildroot}/var/www/freeradius-web/sql
+rm -f %{buildroot}%{_bindir}/dialup_admin.cron
 
 %pre
 %_pre_useradd radius /var/log/radius/radacct /bin/false
@@ -297,15 +387,19 @@ fi
 %postun
 %_postun_userdel radius
 
+%post -n %{name}-web
+%_post_webapp
+
+%postun -n %{name}-web
+%_postun_webapp
+
 %clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
 %doc doc COPYRIGHT CREDITS INSTALL LICENSE README
 %doc README.sql README.smb Readme.cram Standard.draft dictionary.sandy
-
-
 %{_initrddir}/radiusd
 %config(noreplace) %{_sysconfdir}/pam.d/radiusd
 %config(noreplace) %{_sysconfdir}/logrotate.d/radiusd
@@ -334,7 +428,6 @@ fi
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/clients.conf
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/preproxy_users
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/users
-
 %dir %{_sysconfdir}/raddb/certs
 %dir %{_sysconfdir}/raddb/sites-available
 %dir %{_sysconfdir}/raddb/sites-enabled
@@ -342,13 +435,21 @@ fi
 %config(noreplace) %{_sysconfdir}/raddb/sites-enabled/*
 %dir %{_sysconfdir}/raddb/modules
 %config(noreplace) %{_sysconfdir}/raddb/modules/*
-
-%{_bindir}/rad*
-%{_bindir}/rlm_*
+%{_bindir}/radclient
+%{_bindir}/radeapclient
+%{_bindir}/radlast
+%{_bindir}/radsqlrelay
+%{_bindir}/radtest
+%{_bindir}/radwho
+%{_bindir}/radzap
+%{_bindir}/rlm_dbm_cat
+%{_bindir}/rlm_dbm_parser
+%{_bindir}/rlm_ippool_tool
 %{_bindir}/smbencrypt
-%{_sbindir}/check*
-%{_sbindir}/rad*
-
+%{_sbindir}/checkrad
+%{_sbindir}/radiusd
+%{_sbindir}/radmin
+%{_sbindir}/radwatch
 %attr(0755,radius,radius) %dir /var/log/radius
 %attr(0755,radius,radius) %dir /var/log/radius/radacct
 %attr(0755,radius,radius) %dir /var/run/radiusd
@@ -410,3 +511,37 @@ fi
 %endif
 %{_includedir}/%{name}
 %{_libdir}/%{name}/*.a
+
+%files -n %{name}-web
+%defattr(-,root,root)
+%doc dialup_admin/sql/mysql dialup_admin/sql/postgresql dialup_admin/sql/oracle
+%doc dialup_admin/doc/AUTHORS dialup_admin/doc/FAQ dialup_admin/doc/HELP_WANTED
+%doc dialup_admin/doc/HOWTO dialup_admin/doc/TODO dialup_admin/Changelog
+%doc dialup_admin/README dialup_admin/bin/Changelog.*
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/cron.d/%{name}-web
+%attr(0644,root,root) %config(noreplace) %{_webappconfdir}/%{name}-web.conf
+%dir %{_sysconfdir}/%{name}-web
+%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/admin.conf
+%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/captions.conf
+%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/naslist.conf
+%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/config.php
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/accounting.attrs
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/auth.request
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/default.vals
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/extra.ldap-attrmap
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrmap
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrs
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/user_edit.attrs
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/username.mappings
+%{_bindir}/backup_radacct
+%{_bindir}/clean_radacct
+%{_bindir}/clearsession
+%{_bindir}/freeradius-web-snmpfinger
+%{_bindir}/log_badlogins
+%{_bindir}/monthly_tot_stats
+%{_bindir}/radsniff
+%{_bindir}/showmodem
+%{_bindir}/sqlrelay_query
+%{_bindir}/tot_stats
+%{_bindir}/truncate_radacct
+/var/www/%{name}-web
