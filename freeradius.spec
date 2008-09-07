@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.0
-Release:	%mkrel 2
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -25,20 +25,21 @@ Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
 Patch10:	freeradius-server-linkage_fix.diff
-BuildRequires:	krb5-devel
 BuildRequires:	gdbm-devel
-BuildRequires:	libtool-devel
-BuildRequires:	MySQL-devel
-BuildRequires:	openssl-devel
+BuildRequires:	krb5-devel
 BuildRequires:	libsasl-devel
-BuildRequires:	openldap-devel
 BuildRequires:	libtool
-BuildRequires:	unixODBC-devel
+BuildRequires:	libtool-devel
+BuildRequires:	mysql-devel
+BuildRequires:	openldap-devel
+BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
+BuildRequires:	pcap-devel
 BuildRequires:	postgresql-devel
-BuildRequires:	zlib-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-helper >= 0.21
+BuildRequires:	unixODBC-devel
+BuildRequires:	zlib-devel
 # minimal version for ssl cert generation
 Requires(post): openssl
 Requires(post): rpm-helper >= 0.21
@@ -438,6 +439,7 @@ rm -rf %{buildroot}
 %{_bindir}/radclient
 %{_bindir}/radeapclient
 %{_bindir}/radlast
+%{_bindir}/radsniff
 %{_bindir}/radsqlrelay
 %{_bindir}/radtest
 %{_bindir}/radwho
@@ -539,7 +541,6 @@ rm -rf %{buildroot}
 %{_bindir}/freeradius-web-snmpfinger
 %{_bindir}/log_badlogins
 %{_bindir}/monthly_tot_stats
-%{_bindir}/radsniff
 %{_bindir}/showmodem
 %{_bindir}/sqlrelay_query
 %{_bindir}/tot_stats
