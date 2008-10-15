@@ -437,6 +437,7 @@ rm -rf %{buildroot}
 %dir %{_sysconfdir}/raddb/modules
 %config(noreplace) %{_sysconfdir}/raddb/modules/*
 %{_bindir}/radclient
+%{_bindir}/radconf2xml
 %{_bindir}/radeapclient
 %{_bindir}/radlast
 %{_bindir}/radsniff
