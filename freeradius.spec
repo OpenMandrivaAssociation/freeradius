@@ -155,9 +155,9 @@ find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
 %patch0 -p1 -b .config
-%patch4 -p1 -b .peroyvind
+%patch4 -p0 -b .peroyvind
 %patch6 -p1 -b .avoid-version
-%patch8 -p1 -b .samba3
+%patch8 -p0 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
 %patch10 -p0 -b .linkage_fix
 
