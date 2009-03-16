@@ -7,13 +7,13 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.3
-Release:	%mkrel 3
+Version:	2.1.4
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
@@ -28,7 +28,6 @@ Patch10:	freeradius-server-linkage_fix.diff
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
 BuildRequires:	libsasl-devel
-BuildRequires:	libtool
 BuildRequires:	libtool-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
@@ -188,9 +187,6 @@ perl -pi -e "s|\\\${bindir}|\\\${bindir}/|g" dialup_admin/Makefile
 
 %build
 %serverbuild
-
-# use bundled libtool...
-%define __libtoolize /bin/true
 
 export CFLAGS="$CFLAGS -fPIC -DLDAP_DEPRECATED"
 export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
@@ -406,7 +402,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/logrotate.d/radiusd
 %config(noreplace)  %{_sysconfdir}/sysconfig/radiusd
 %dir %{_sysconfdir}/raddb
-%config(noreplace) %{_sysconfdir}/raddb/acct_users
 %config(noreplace) %{_sysconfdir}/raddb/attrs
 %config(noreplace) %{_sysconfdir}/raddb/attrs.access_reject
 %config(noreplace) %{_sysconfdir}/raddb/attrs.accounting_response
@@ -426,6 +421,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/raddb/sqlippool.conf
 %config(noreplace) %{_sysconfdir}/raddb/templates.conf
 # those contains passwords
+%config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/acct_users
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/clients.conf
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/preproxy_users
 %config(noreplace) %attr(0640,root,radius) %{_sysconfdir}/raddb/users
