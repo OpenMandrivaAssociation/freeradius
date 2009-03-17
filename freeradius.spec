@@ -19,7 +19,7 @@ Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
-Patch0:		freeradius-config.diff
+Patch0:		freeradius-2.1.4-ssl-config.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
@@ -195,6 +195,7 @@ export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
     --with-gnu-ld \
     --with-threads \
     --with-thread-pool \
+    --with-system-libtool \
     --libdir=%{_libdir}/%{name}  \
     --libexecdir=%{_libdir}/%{name} \
     --localstatedir=%{_var} \
@@ -416,7 +417,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/raddb/policy.txt
 %config(noreplace) %{_sysconfdir}/raddb/proxy.conf
 %config(noreplace) %{_sysconfdir}/raddb/eap.conf
-%config(noreplace) %{_sysconfdir}/raddb/otp.conf
 %config(noreplace) %{_sysconfdir}/raddb/sql.conf
 %config(noreplace) %{_sysconfdir}/raddb/sqlippool.conf
 %config(noreplace) %{_sysconfdir}/raddb/templates.conf
@@ -449,6 +449,7 @@ rm -rf %{buildroot}
 %{_sbindir}/radiusd
 %{_sbindir}/radmin
 %{_sbindir}/radwatch
+%{_sbindir}/raddebug
 %attr(0755,radius,radius) %dir /var/log/radius
 %attr(0755,radius,radius) %dir /var/log/radius/radacct
 %attr(0755,radius,radius) %dir /var/run/radiusd
@@ -489,7 +490,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_libdir}/%{name}/libfreeradius-radius*.la
 %{_libdir}/%{name}/libfreeradius-radius*.so
-%{_libdir}/%{name}/libfreeradius-eap.la
+%{_libdir}/%{name}/libfreeradius-eap*.la
 %{_libdir}/%{name}/libfreeradius-eap*.so
 %{_libdir}/%{name}/rlm_*.la
 %{_libdir}/%{name}/rlm_*.so
