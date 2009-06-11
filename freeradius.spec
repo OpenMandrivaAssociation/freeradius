@@ -7,7 +7,7 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.4
+Version:	2.1.6
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
@@ -20,6 +20,7 @@ Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
 Patch0:		freeradius-2.1.4-ssl-config.patch
+Patch1:     freeradius-server-2.1.6-fix-format-errors.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
@@ -46,7 +47,7 @@ Requires(preun): rpm-helper >= 0.19
 Requires(pre): rpm-helper >= 0.19
 Requires(postun): rpm-helper >= 0.19
 Conflicts:	radiusd-cistron
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
 
 %description
 The FreeRADIUS Server Project is a high-performance and highly configurable
@@ -145,7 +146,6 @@ information is stored in an ldap server or an sql database and accounting in an
 sql server.
 
 %prep
-
 %setup -q -n %{name}-server-%{version}
 
 # fix strange perms
@@ -159,6 +159,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch8 -p0 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
 %patch10 -p0 -b .linkage_fix
+%patch1 -p 1
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
