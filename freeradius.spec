@@ -7,7 +7,7 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.6
+Version:	2.1.7
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
@@ -224,15 +224,17 @@ export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
     --with-unixodbc-dir=%{_prefix}
 
 # enable this one with a hack...
-perl -pi -e "s|^TARGET.*|TARGET=rlm_dbm|g" src/modules/rlm_dbm/Makefile
-perl -pi -e "s|^SRCS.*|SRCS=rlm_dbm.c|g" src/modules/rlm_dbm/Makefile
-perl -pi -e "s|^RLM_UTILS.*|RLM_UTILS=rlm_dbm_parser rlm_dbm_cat|g" src/modules/rlm_dbm/Makefile
-perl -pi -e "s|^RLM_CFLAGS.*|RLM_CFLAGS=-I%{_includedir}/gdbm -DHAVE_GDBM_NDBM_H|g" src/modules/rlm_dbm/Makefile
-perl -pi -e "s|^RLM_LIBS.*|RLM_LIBS=-L%{_libdir} -lgdbm -lgdbm_compat|g" src/modules/rlm_dbm/Makefile
-perl -pi -e "s|^RLM_INSTALL.*|RLM_INSTALL=rlm_dbm_install|g" src/modules/rlm_dbm/Makefile
+perl -pi \
+    -e "s|^TARGET.*|TARGET=rlm_dbm|g;" \
+    -e "s|^SRCS.*|SRCS=rlm_dbm.c|g;" \
+    -e "s|^RLM_UTILS.*|RLM_UTILS=rlm_dbm_parser rlm_dbm_cat|g;" \
+    -e "s|^RLM_CFLAGS.*|RLM_CFLAGS=-I%{_includedir}/gdbm -DHAVE_GDBM_NDBM_H|g;" \
+    -e "s|^RLM_LIBS.*|RLM_LIBS=-L%{_libdir} -lgdbm -lgdbm_compat|g;" \
+    -e "s|^RLM_INSTALL.*|RLM_INSTALL=rlm_dbm_install|g;" \
+    src/modules/rlm_dbm/Makefile
 
 %if "%{_lib}" == "lib64"
-perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
+    perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
 make
@@ -240,45 +242,43 @@ make
 %install
 rm -rf %{buildroot}
 
-%__install -d %{buildroot}%{_sysconfdir}/logrotate.d
-%__install -d %{buildroot}%{_sysconfdir}/pam.d
-%__install -d %{buildroot}%{_sysconfdir}/sysconfig
-%__install -d %{buildroot}%{_initrddir}
-%__install -d %{buildroot}/var/run/radiusd
-%__install -d %{buildroot}%{_includedir}/%{name}
+%__install -d -m 755 %{buildroot}%{_sysconfdir}/logrotate.d
+%__install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
+%__install -d -m 755 %{buildroot}%{_sysconfdir}/sysconfig
+%__install -d -m 755 %{buildroot}%{_initrddir}
+%__install -d -m 755 %{buildroot}%{_localstatedir}/run/radiusd
+%__install -d -m 755 %{buildroot}%{_includedir}/%{name}
 
 make install R=%{buildroot}
 
 # install headers
-%__install -m0644 src/include/*  %{buildroot}%{_includedir}/%{name}/
+%__install -m 644 src/include/*  %{buildroot}%{_includedir}/%{name}/
 
 # install Mandriva scripts and stuff...
-%__install -m0644 Mandriva/%{name}.pam %{buildroot}%{_sysconfdir}/pam.d/radiusd
-%__install -m0644 Mandriva/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
-%__install -m0755 Mandriva/%{name}.init %{buildroot}%{_initrddir}/radiusd
-%__install -m0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/radiusd
+%__install -m 644 Mandriva/%{name}.pam %{buildroot}%{_sysconfdir}/pam.d/radiusd
+%__install -m 644 Mandriva/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
+%__install -m 755 Mandriva/%{name}.init %{buildroot}%{_initrddir}/radiusd
+%__install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/radiusd
 
 # put the mibs in place
-%__install -d %{buildroot}%{_datadir}/snmp/mibs
-%__install -m0644 mibs/RADIUS* %{buildroot}%{_datadir}/snmp/mibs/
+%__install -d -m 755 %{buildroot}%{_datadir}/snmp/mibs
+%__install -m 644 mibs/RADIUS* %{buildroot}%{_datadir}/snmp/mibs/
 
 # fix ghostfiles
-touch %{buildroot}/var/log/radius/radutmp
-touch %{buildroot}/var/log/radius/radwtmp
-touch %{buildroot}/var/log/radius/radius.log
+touch %{buildroot}%{_localstatedir}/log/radius/radutmp
+touch %{buildroot}%{_localstatedir}/log/radius/radwtmp
+touch %{buildroot}%{_localstatedir}/log/radius/radius.log
 
 # remove unneeded stuff
 %__rm -f %{buildroot}%{_sbindir}/rc.radiusd
 %__rm -f %{buildroot}%{_includedir}/%{name}/Makefile
+%__rm -f %{buildroot}%{_sysconfdir}/raddb/Makefile
 %__rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/mssql
 %__rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/oracle
 %__rm -f %{buildroot}%{_sysconfdir}/raddb/certs/*
 
 # remove faulty perl file...
 %__rm -f %{buildroot}%{_libdir}/%{name}/rlm_perl.a
-
-# this annoying file gets installed on ML9.0, remove it...
-%__rm -f %{buildroot}%{_sysconfdir}/raddb/Makefile
 
 # include more docs
 %__cp src/modules/rlm_sql/README README.sql
@@ -296,7 +296,8 @@ touch %{buildroot}/var/log/radius/radius.log
 rm -f %{buildroot}%{_libdir}/%{name}/*%{version}*.la
 
 #remove buildroot from the libtool files:
-perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" %{buildroot}%{_libdir}/%{name}/*.la 
+perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" \
+    %{buildroot}%{_libdir}/%{name}/*.la 
 
 %if %mdkversion >= 1020
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/build-radpaths-h
@@ -304,30 +305,35 @@ perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" %{buildroot}%{_libdir}/%{name}/*.
 %endif
 
 # the web cruft
-install -d %{buildroot}/var/www/%{name}-web
+install -d %{buildroot}%{_datadir}/%{name}-web
 install -d %{buildroot}%{_sysconfdir}/%{name}-web
 
 pushd dialup_admin
 make \
-    DIALUP_PREFIX=%{buildroot}/var/www/freeradius-web \
+    DIALUP_PREFIX=%{buildroot}%{_datadir}/freeradius-web \
     DIALUP_DOCDIR=%{buildroot}%{_docdir}/freeradius-web \
     DIALUP_CONFDIR=%{buildroot}%{_sysconfdir}/freeradius-web \
     install
 popd
 
-find %{buildroot}/var/www/freeradius-web | xargs perl -pi -e "s|%{buildroot}||g"
-find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi -e "s|%{buildroot}||g"
-find %{buildroot}/var/www/freeradius-web | xargs perl -pi -e "s|\.\./conf/config\.php|%{_sysconfdir}/freeradius-web/config\.php|g"
-find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi -e "s|\.\./conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g"
+find %{buildroot}%{_datadir}/freeradius-web | xargs perl -pi \
+    -e 's|\.\./conf/config\.php|%{_sysconfdir}/freeradius-web/config\.php|g;' \
+    -e 's|%{buildroot}||g;'
 
-perl -pi -e "s|/data/local/dialupadmin/conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g" %{buildroot}/var/www/freeradius-web/bin/*
-perl -pi -e "s|/logs/radiusd/accounting|/var/log/radius/accounting|g"  %{buildroot}/var/www/freeradius-web/bin/*
+find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi \
+    -e 's|\.\./conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
+    -e 's|%{buildroot}||g;'
 
-mv %{buildroot}/var/www/freeradius-web/bin/* %{buildroot}%{_bindir}/
-mv %{buildroot}%{_bindir}/snmpfinger %{buildroot}%{_bindir}/freeradius-web-snmpfinger
+find %{buildroot}%{_datadir}/freeradius-web/bin | xargs perl -pi \
+    -e 's|/data/local/dialupadmin/conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
+    -e 's|/logs/radiusd/accounting|%{_localstatedir}/log/radius/accounting|g;'
+
+mv %{buildroot}%{_datadir}/freeradius-web/bin/* %{buildroot}%{_bindir}
+mv %{buildroot}%{_bindir}/snmpfinger \
+    %{buildroot}%{_bindir}/freeradius-web-snmpfinger
 
 # fix a simple redirector
-cat > %{buildroot}/var/www/%{name}-web/index.html << EOF
+cat > %{buildroot}%{_datadir}/%{name}-web/index.html << EOF
 <html>
 <head>
 <title></title>
@@ -342,9 +348,9 @@ EOF
 install -d %{buildroot}%{_webappconfdir}
 cat > %{buildroot}%{_webappconfdir}/%{name}-web.conf <<EOF
 # %{name} Apache configuration
-Alias /%{name}-web %{_var}/www/%{name}-web
+Alias /%{name}-web %{_datadir}/%{name}-web
 
-<Directory %{_var}/www/%{name}-web>
+<Directory %{_datadir}/%{name}-web>
     Allow from all
 </Directory>
 EOF
@@ -361,18 +367,18 @@ EOF
 # cleanup
 rm -rf %{buildroot}%{_docdir}/%{name}
 rm -rf %{buildroot}%{_docdir}/freeradius-web
-rm -rf %{buildroot}/var/www/freeradius-web/bin
-rm -rf %{buildroot}/var/www/freeradius-web/sql
+rm -rf %{buildroot}%{_datadir}/freeradius-web/bin
+rm -rf %{buildroot}%{_datadir}/freeradius-web/sql
 rm -f %{buildroot}%{_bindir}/dialup_admin.cron
 
 %pre
-%_pre_useradd radius /var/log/radius/radacct /bin/false
+%_pre_useradd radius %{_localstatedir}/log/radius/radacct /bin/false
 
 %post
 %_post_service radiusd
-%create_ghostfile /var/log/radius/radutmp radius radius 0644
-%create_ghostfile /var/log/radius/radwtmp radius radius 0644
-%create_ghostfile /var/log/radius/radius.log radius radius 0644
+%create_ghostfile %{_localstatedir}/log/radius/radutmp radius radius 0644
+%create_ghostfile %{_localstatedir}/log/radius/radwtmp radius radius 0644
+%create_ghostfile %{_localstatedir}/log/radius/radius.log radius radius 0644
 %_create_ssl_certificate radiusd -g radius
 if [ $1 = 1 ]; then
     openssl dhparam -out  %{_sysconfdir}/raddb/certs/dh 1024 2>&1 >/dev/null
@@ -433,6 +439,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/raddb/sites-enabled/*
 %dir %{_sysconfdir}/raddb/modules
 %config(noreplace) %{_sysconfdir}/raddb/modules/*
+%dir %{_sysconfdir}/raddb/sql
+%dir %{_sysconfdir}/raddb/sql/ndb
+%config(noreplace) %{_sysconfdir}/raddb/sql/ndb/README
+%config(noreplace) %{_sysconfdir}/raddb/sql/ndb/admin.sql
+%config(noreplace) %{_sysconfdir}/raddb/sql/ndb/schema.sql
 %{_bindir}/radclient
 %{_bindir}/radconf2xml
 %{_bindir}/radeapclient
@@ -451,12 +462,12 @@ rm -rf %{buildroot}
 %{_sbindir}/radmin
 %{_sbindir}/radwatch
 %{_sbindir}/raddebug
-%attr(0755,radius,radius) %dir /var/log/radius
-%attr(0755,radius,radius) %dir /var/log/radius/radacct
-%attr(0755,radius,radius) %dir /var/run/radiusd
-%attr(0644,radius,radius) %ghost /var/log/radius/radutmp
-%attr(0644,radius,radius) %ghost /var/log/radius/radwtmp
-%attr(0644,radius,radius) %ghost /var/log/radius/radius.log
+%attr(0755,radius,radius) %dir %{_localstatedir}/log/radius
+%attr(0755,radius,radius) %dir %{_localstatedir}/log/radius/radacct
+%attr(0755,radius,radius) %dir %{_localstatedir}/run/radiusd
+%attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radutmp
+%attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radwtmp
+%attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radius.log
 %{_datadir}/snmp/mibs/*
 %{_datadir}/freeradius
 %{_mandir}/man*/*
@@ -519,21 +530,22 @@ rm -rf %{buildroot}
 %doc dialup_admin/doc/AUTHORS dialup_admin/doc/FAQ dialup_admin/doc/HELP_WANTED
 %doc dialup_admin/doc/HOWTO dialup_admin/doc/TODO dialup_admin/Changelog
 %doc dialup_admin/README dialup_admin/bin/Changelog.*
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/cron.d/%{name}-web
-%attr(0644,root,root) %config(noreplace) %{_webappconfdir}/%{name}-web.conf
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}-web
+%config(noreplace) %{_webappconfdir}/%{name}-web.conf
 %dir %{_sysconfdir}/%{name}-web
-%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/admin.conf
-%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/captions.conf
-%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/naslist.conf
-%attr(0640,apache,root) %config(noreplace) %{_sysconfdir}/%{name}-web/config.php
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/accounting.attrs
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/auth.request
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/default.vals
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/extra.ldap-attrmap
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrmap
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrs
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/user_edit.attrs
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}-web/username.mappings
+%config(noreplace) %{_sysconfdir}/%{name}-web/accounting.attrs
+%config(noreplace) %{_sysconfdir}/%{name}-web/auth.request
+%config(noreplace) %{_sysconfdir}/%{name}-web/default.vals
+%config(noreplace) %{_sysconfdir}/%{name}-web/extra.ldap-attrmap
+%config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrmap
+%config(noreplace) %{_sysconfdir}/%{name}-web/sql.attrs
+%config(noreplace) %{_sysconfdir}/%{name}-web/user_edit.attrs
+%config(noreplace) %{_sysconfdir}/%{name}-web/username.mappings
+# those contains passwords
+%config(noreplace) %attr(0640,root,apache) %{_sysconfdir}/%{name}-web/admin.conf
+%config(noreplace) %attr(0640,root,apache) %{_sysconfdir}/%{name}-web/captions.conf
+%config(noreplace) %attr(0640,root,apache) %{_sysconfdir}/%{name}-web/naslist.conf
+%config(noreplace) %attr(0640,root,apache) %{_sysconfdir}/%{name}-web/config.php
 %{_bindir}/backup_radacct
 %{_bindir}/clean_radacct
 %{_bindir}/clearsession
@@ -544,4 +556,4 @@ rm -rf %{buildroot}
 %{_bindir}/sqlrelay_query
 %{_bindir}/tot_stats
 %{_bindir}/truncate_radacct
-/var/www/%{name}-web
+%{_datadir}/%{name}-web
