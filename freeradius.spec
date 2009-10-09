@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.7
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -356,13 +356,21 @@ Alias /%{name}-web %{_datadir}/%{name}-web
 EOF
 
 # cron stuff
-install -d %{buildroot}%{_sysconfdir}/cron.d
-cat > %{buildroot}%{_sysconfdir}/cron.d/%{name}-web <<EOF
-1 0 * * * %{_bindir}/tot_stats >/dev/null 2>&1
-5 0 * * * %{_bindir}/monthly_tot_stats >/dev/null 2>&1
-10 0 1 * * %{_bindir}/truncate_radacct >/dev/null 2>&1
-15 0 1 * * %{_bindir}/clean_radacct >/dev/null 2>&1
+install -d %{buildroot}%{_sysconfdir}/cron.daily
+cat > %{buildroot}%{_sysconfdir}/cron.daily/%{name}-web <<EOF
+#!/bin/sh
+%{_bindir}/tot_stats >/dev/null 2>&1
+%{_bindir}/monthly_tot_stats >/dev/null 2>&1
 EOF
+chmod 755 %{buildroot}%{_sysconfdir}/cron.daily/%{name}-web
+
+install -d %{buildroot}%{_sysconfdir}/cron.monthly
+cat > %{buildroot}%{_sysconfdir}/cron.monthly/%{name}-web <<EOF
+#!/bin/sh
+%{_bindir}/truncate_radacct >/dev/null 2>&1
+%{_bindir}/clean_radacct >/dev/null 2>&1
+EOF
+chmod 755 %{buildroot}%{_sysconfdir}/cron.monthly/%{name}-web
 
 # cleanup
 rm -rf %{buildroot}%{_docdir}/%{name}
@@ -530,7 +538,8 @@ rm -rf %{buildroot}
 %doc dialup_admin/doc/AUTHORS dialup_admin/doc/FAQ dialup_admin/doc/HELP_WANTED
 %doc dialup_admin/doc/HOWTO dialup_admin/doc/TODO dialup_admin/Changelog
 %doc dialup_admin/README dialup_admin/bin/Changelog.*
-%config(noreplace) %{_sysconfdir}/cron.d/%{name}-web
+%config(noreplace) %{_sysconfdir}/cron.daily/%{name}-web
+%config(noreplace) %{_sysconfdir}/cron.monthly/%{name}-web
 %config(noreplace) %{_webappconfdir}/%{name}-web.conf
 %dir %{_sysconfdir}/%{name}-web
 %config(noreplace) %{_sysconfdir}/%{name}-web/accounting.attrs
