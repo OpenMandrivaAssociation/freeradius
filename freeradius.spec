@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.7
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -160,6 +160,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch8 -p0 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
 %patch10 -p0 -b .linkage_fix
+%patch11 -p1 -b .file-temp
 %patch1 -p 1
 
 # For pre release only:
