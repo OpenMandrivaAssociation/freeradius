@@ -403,10 +403,14 @@ fi
 %_postun_userdel radius
 
 %post -n %{name}-web
+%if %mdkversion < 201010
 %_post_webapp
+%endif
 
 %postun -n %{name}-web
+%if %mdkversion < 201010
 %_postun_webapp
+%endif
 
 %clean
 rm -rf %{buildroot}
