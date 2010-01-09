@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.7
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -26,6 +26,7 @@ Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-1.1.2-ltdl_no_la.diff
 Patch10:	freeradius-server-linkage_fix.diff
+Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
 BuildRequires:	libsasl-devel
