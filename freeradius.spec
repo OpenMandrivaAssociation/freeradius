@@ -7,8 +7,8 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.7
-Release:	%mkrel 4
+Version:	2.1.8
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -24,7 +24,7 @@ Patch1:     freeradius-server-2.1.6-fix-format-errors.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-2.0.0-avoid-version.patch
 Patch8:		freeradius-2.0.0-samba3.patch
-Patch9:		freeradius-1.1.2-ltdl_no_la.diff
+Patch9:		freeradius-server-2.1.8-ltdl_no_la.patch
 Patch10:	freeradius-server-linkage_fix.diff
 Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
 BuildRequires:	gdbm-devel
@@ -426,6 +426,7 @@ rm -rf %{buildroot}
 %dir %{_sysconfdir}/raddb
 %config(noreplace) %{_sysconfdir}/raddb/attrs
 %config(noreplace) %{_sysconfdir}/raddb/attrs.access_reject
+%config(noreplace) %{_sysconfdir}/raddb/attrs.access_challenge
 %config(noreplace) %{_sysconfdir}/raddb/attrs.accounting_response
 %config(noreplace) %{_sysconfdir}/raddb/attrs.pre-proxy
 %config(noreplace) %{_sysconfdir}/raddb/dictionary*
