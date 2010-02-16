@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.8
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -252,6 +252,16 @@ rm -rf %{buildroot}
 %__install -d -m 755 %{buildroot}%{_includedir}/%{name}
 
 make install R=%{buildroot}
+
+# fix default configuration file permissions
+find %{buildroot}%{_sysconfdir}/raddb -type d | xargs chmod 755
+find %{buildroot}%{_sysconfdir}/raddb -type f | xargs chmod 755
+chmod 640 \
+    %{buildroot}%{_sysconfdir}/raddb/acct_users \
+    %{buildroot}%{_sysconfdir}/raddb/acct_users \
+    %{buildroot}%{_sysconfdir}/raddb/clients.conf \
+    %{buildroot}%{_sysconfdir}/raddb/preproxy_users \
+    %{buildroot}%{_sysconfdir}/raddb/users \
 
 # install headers
 %__install -m 644 src/include/*  %{buildroot}%{_includedir}/%{name}/
