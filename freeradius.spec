@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.8
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -124,7 +124,7 @@ Obsoletes:	freeradius-devel
 %description -n	%{develname}
 Development headers and libraries for %{name}
 
-%package -n	%{name}-web
+%package web
 Summary:	Web based administration interface for freeradius
 Group:		System/Servers
 Requires:	apache-mod_php
@@ -132,15 +132,14 @@ Requires:	freeradius
 Requires:	php-mysql
 Requires:	net-snmp-mibs
 Requires:	net-snmp-utils
-# webapp macros and scriptlets
-Requires(post):	 rpm-helper >= 0.16
-Requires(postun): rpm-helper >= 0.16
-BuildRequires:	rpm-helper >= 0.16
-BuildRequires:	rpm-mandriva-setup >= 1.23
+%if %mdkversion < 201010
+Requires(post):   rpm-helper
+Requires(postun):   rpm-helper
+%endif
 Provides:	dialup_admin = %{version}-%{release}
 Obsoletes:	dialup_admin
 
-%description -n	%{name}-web
+%description web
 dialup_admin is a web based administration interface for the freeradius radius
 server. It is written in PHP4. It is modular and right now it assumes that user
 information is stored in an ldap server or an sql database and accounting in an
@@ -412,12 +411,12 @@ fi
 %postun
 %_postun_userdel radius
 
-%post -n %{name}-web
+%post web
 %if %mdkversion < 201010
 %_post_webapp
 %endif
 
-%postun -n %{name}-web
+%postun web
 %if %mdkversion < 201010
 %_postun_webapp
 %endif
