@@ -7,13 +7,13 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.9
+Version:	2.1.10
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
@@ -470,6 +470,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/raddb/sql/ndb/schema.sql
 %{_bindir}/radclient
 %{_bindir}/radconf2xml
+%{_bindir}/radcrypt
 %{_bindir}/radeapclient
 %{_bindir}/radlast
 %{_bindir}/radsniff
@@ -482,10 +483,10 @@ rm -rf %{buildroot}
 %{_bindir}/rlm_ippool_tool
 %{_bindir}/smbencrypt
 %{_sbindir}/checkrad
+%{_sbindir}/raddebug
 %{_sbindir}/radiusd
 %{_sbindir}/radmin
 %{_sbindir}/radwatch
-%{_sbindir}/raddebug
 %attr(0755,radius,radius) %dir %{_localstatedir}/log/radius
 %attr(0755,radius,radius) %dir %{_localstatedir}/log/radius/radacct
 %attr(0755,radius,radius) %dir %{_localstatedir}/run/radiusd
