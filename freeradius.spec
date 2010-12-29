@@ -258,7 +258,7 @@ perl -pi \
     perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
-%make
+make
 
 %install
 rm -rf %{buildroot}
