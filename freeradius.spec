@@ -20,9 +20,10 @@ Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
 Patch0:		freeradius-2.1.4-ssl-config.patch
-Patch1:     freeradius-server-2.1.6-fix-format-errors.patch
+Patch1:		freeradius-server-2.1.6-fix-format-errors.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
-Patch6:		freeradius-2.0.0-avoid-version.patch
+Patch6:		freeradius-server-2.1.10-avoid-version.diff
+Patch7:		freeradius-server-2.1.10-version-info.diff
 Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-server-2.1.8-ltdl_no_la.patch
 Patch10:	freeradius-server-linkage_fix.diff
@@ -39,6 +40,7 @@ BuildRequires:	pcap-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-helper >= 0.21
+BuildRequires:	sqlite3-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	zlib-devel
 # minimal version for ssl cert generation
@@ -106,6 +108,16 @@ Obsoletes:	%{libname}-unixODBC
 The FreeRADIUS server can use unixODBC to authenticate users and do accounting,
 and this module is necessary for that.
 
+%package -n	%{name}-sqlite
+Summary:	The sqlite module for %{name}
+Group:		System/Servers
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	%{libname}-sqlite
+
+%description -n	%{name}-sqlite
+The FreeRADIUS server can use sqlite to authenticate users and do accounting,
+and this module is necessary for that.
+
 %package -n	%{libname}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
@@ -153,9 +165,10 @@ find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
-%patch0 -p1 -b .config
+%patch0 -p0 -b .config
 %patch4 -p0 -b .peroyvind
 %patch6 -p1 -b .avoid-version
+%patch7 -p1 -b .version-info
 %patch8 -p0 -b .samba3
 %patch9 -p1 -b .ltdl_no_la
 %patch10 -p0 -b .linkage_fix
@@ -222,7 +235,13 @@ export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
     --with-rlm-sql-postgresql-lib-dir=%{_libdir}/mysql \
     --with-rlm-sql-postgresql-include-dir=%{_includedir}/pgsql \
     --with-unixodbc-lib-dir=%{_libdir} \
-    --with-unixodbc-dir=%{_prefix}
+    --with-unixodbc-dir=%{_prefix} \
+    --without-rlm_sql_db2 \
+    --without-rlm_sql_firebird \
+    --without-rlm_sql_freetds \
+    --without-rlm_sql_iodbc \
+    --without-rlm_sql_oracle \
+    --without-rlm_sql_sybase \
 
 # enable this one with a hack...
 perl -pi \
@@ -238,7 +257,7 @@ perl -pi \
     perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
-make
+%make
 
 %install
 rm -rf %{buildroot}
@@ -254,7 +273,7 @@ make install R=%{buildroot}
 
 # fix default configuration file permissions
 find %{buildroot}%{_sysconfdir}/raddb -type d | xargs chmod 755
-find %{buildroot}%{_sysconfdir}/raddb -type f | xargs chmod 755
+find %{buildroot}%{_sysconfdir}/raddb -type f | xargs chmod 644
 chmod 640 \
     %{buildroot}%{_sysconfdir}/raddb/acct_users \
     %{buildroot}%{_sysconfdir}/raddb/acct_users \
@@ -500,44 +519,91 @@ rm -rf %{buildroot}
 %files -n %{name}-krb5
 %defattr(-,root,root)
 %doc rlm_krb5
-%{_libdir}/%{name}/rlm_krb5*.so*
+%{_libdir}/%{name}/rlm_krb5.so
 
 %files -n %{name}-ldap
 %defattr(-,root,root)
 %doc RADIUS*.schema rlm_ldap doc/examples/openldap.schema
 %config(noreplace) %{_sysconfdir}/raddb/ldap.attrmap
-%{_libdir}/%{name}/rlm_ldap*.so*
+%{_libdir}/%{name}/rlm_ldap.so
 
 %files -n %{name}-postgresql
 %defattr(-,root,root)
 %doc src/billing
 %config(noreplace) %{_sysconfdir}/raddb/sql/postgresql
-%{_libdir}/%{name}/rlm_sql_postgresql*.so*
+%{_libdir}/%{name}/rlm_sql_postgresql.so
 
 %files -n %{name}-mysql
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/raddb/sql/mysql
-%{_libdir}/%{name}/rlm_sql_mysql*.so*
+%{_libdir}/%{name}/rlm_sql_mysql.so
 
 %files -n %{name}-unixODBC
 %defattr(-,root,root)
-%{_libdir}/%{name}/rlm_sql_unixodbc*.so*
+%{_libdir}/%{name}/rlm_sql_unixodbc.so
+
+%files -n %{name}-sqlite
+%defattr(-,root,root)
+%{_libdir}/%{name}/rlm_sql_sqlite.so
 
 %files -n %{libname}
 %defattr(-,root,root)
-%{_libdir}/%{name}/libfreeradius-radius*.la
-%{_libdir}/%{name}/libfreeradius-radius*.so
-%{_libdir}/%{name}/libfreeradius-eap*.la
-%{_libdir}/%{name}/libfreeradius-eap*.so
-%{_libdir}/%{name}/rlm_*.la
-%{_libdir}/%{name}/rlm_*.so
-
-# these belong to their respective sub package
-%exclude %{_libdir}/%{name}/rlm_sql_mysql*
-%exclude %{_libdir}/%{name}/rlm_sql_postgresql*
-%exclude %{_libdir}/%{name}/rlm_sql_unixodbc*
-%exclude %{_libdir}/%{name}/rlm_krb5*
-%exclude %{_libdir}/%{name}/rlm_ldap*
+%{_libdir}/%{name}/libfreeradius-radius.so.%{major}*
+%{_libdir}/%{name}/libfreeradius-eap.so.%{major}*
+%{_libdir}/%{name}/rlm_acctlog.so
+%{_libdir}/%{name}/rlm_acct_unique.so
+%{_libdir}/%{name}/rlm_always.so
+%{_libdir}/%{name}/rlm_attr_filter.so
+%{_libdir}/%{name}/rlm_attr_rewrite.so
+%{_libdir}/%{name}/rlm_chap.so
+%{_libdir}/%{name}/rlm_checkval.so
+%{_libdir}/%{name}/rlm_copy_packet.so
+%{_libdir}/%{name}/rlm_counter.so
+%{_libdir}/%{name}/rlm_cram.so
+%{_libdir}/%{name}/rlm_dbm.so
+%{_libdir}/%{name}/rlm_detail.so
+%{_libdir}/%{name}/rlm_digest.so
+%{_libdir}/%{name}/rlm_dynamic_clients.so
+%{_libdir}/%{name}/rlm_eap_gtc.so
+%{_libdir}/%{name}/rlm_eap_leap.so
+%{_libdir}/%{name}/rlm_eap_md5.so
+%{_libdir}/%{name}/rlm_eap_mschapv2.so
+%{_libdir}/%{name}/rlm_eap_peap.so
+%{_libdir}/%{name}/rlm_eap_sim.so
+%{_libdir}/%{name}/rlm_eap.so
+%{_libdir}/%{name}/rlm_eap_tls.so
+%{_libdir}/%{name}/rlm_eap_ttls.so
+%{_libdir}/%{name}/rlm_example.so
+%{_libdir}/%{name}/rlm_exec.so
+%{_libdir}/%{name}/rlm_expiration.so
+%{_libdir}/%{name}/rlm_expr.so
+%{_libdir}/%{name}/rlm_fastusers.so
+%{_libdir}/%{name}/rlm_files.so
+%{_libdir}/%{name}/rlm_ippool.so
+%{_libdir}/%{name}/rlm_jradius.so
+%{_libdir}/%{name}/rlm_linelog.so
+%{_libdir}/%{name}/rlm_logintime.so
+%{_libdir}/%{name}/rlm_mschap.so
+%{_libdir}/%{name}/rlm_otp.so
+%{_libdir}/%{name}/rlm_pam.so
+%{_libdir}/%{name}/rlm_pap.so
+%{_libdir}/%{name}/rlm_passwd.so
+%{_libdir}/%{name}/rlm_perl.so
+%{_libdir}/%{name}/rlm_policy.so
+%{_libdir}/%{name}/rlm_preprocess.so
+%{_libdir}/%{name}/rlm_protocol_filter.so
+%{_libdir}/%{name}/rlm_python.so
+%{_libdir}/%{name}/rlm_radutmp.so
+%{_libdir}/%{name}/rlm_realm.so
+%{_libdir}/%{name}/rlm_sim_files.so
+%{_libdir}/%{name}/rlm_smsotp.so
+%{_libdir}/%{name}/rlm_sqlcounter.so
+%{_libdir}/%{name}/rlm_sqlhpwippool.so
+%{_libdir}/%{name}/rlm_sqlippool.so
+%{_libdir}/%{name}/rlm_sql_log.so
+%{_libdir}/%{name}/rlm_sql.so
+%{_libdir}/%{name}/rlm_unix.so
+%{_libdir}/%{name}/rlm_wimax.so
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -547,7 +613,9 @@ rm -rf %{buildroot}
 %multiarch %{multiarch_includedir}/freeradius/radpaths.h
 %endif
 %{_includedir}/%{name}
-%{_libdir}/%{name}/*.a
+%{_libdir}/%{name}/libfreeradius-radius.so
+%{_libdir}/%{name}/libfreeradius-eap.so
+%{_libdir}/%{name}/*.*a
 
 %files -n %{name}-web
 %defattr(-,root,root)
