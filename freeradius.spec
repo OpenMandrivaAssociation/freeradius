@@ -37,6 +37,7 @@ BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 BuildRequires:	pcap-devel
+BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-helper >= 0.21
