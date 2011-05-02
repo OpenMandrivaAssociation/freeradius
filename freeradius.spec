@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.10
-Release:	%mkrel 5
+Release:	%mkrel 6
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -330,10 +330,8 @@ rm -f %{buildroot}%{_libdir}/%{name}/*%{version}*.la
 perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" \
     %{buildroot}%{_libdir}/%{name}/*.la 
 
-%if %mdkversion >= 1020
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/build-radpaths-h
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/radpaths.h
-%endif
 
 # the web cruft
 install -d %{buildroot}%{_datadir}/%{name}-web
@@ -609,10 +607,8 @@ rm -rf %{buildroot}
 %files -n %{develname}
 %defattr(-,root,root)
 %doc todo
-%if %mdkversion >= 1020
-%multiarch %{multiarch_includedir}/freeradius/build-radpaths-h
-%multiarch %{multiarch_includedir}/freeradius/radpaths.h
-%endif
+%{multiarch_includedir}/freeradius/build-radpaths-h
+%{multiarch_includedir}/freeradius/radpaths.h
 %{_includedir}/%{name}
 %{_libdir}/%{name}/libfreeradius-radius.so
 %{_libdir}/%{name}/libfreeradius-eap.so
