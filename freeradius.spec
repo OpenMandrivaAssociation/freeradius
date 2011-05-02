@@ -331,6 +331,7 @@ perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" \
     %{buildroot}%{_libdir}/%{name}/*.la 
 
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/build-radpaths-h
+
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/radpaths.h
 
 # the web cruft
