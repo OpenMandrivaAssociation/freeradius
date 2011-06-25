@@ -40,6 +40,7 @@ BuildRequires:	pcap-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
+BuildRequires:	ruby-devel
 BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	sqlite3-devel
 BuildRequires:	unixODBC-devel
