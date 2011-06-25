@@ -7,19 +7,19 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.10
-Release:	%mkrel 6
+Version:	2.1.11
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
 Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
-Patch0:		freeradius-2.1.4-ssl-config.patch
+Patch0:		freeradius-2.1.11-ssl-config.patch
 Patch1:		freeradius-server-2.1.6-fix-format-errors.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-server-2.1.10-avoid-version.diff
@@ -166,7 +166,7 @@ find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
-%patch0 -p0 -b .config
+%patch0 -p1 -b .config
 %patch4 -p0 -b .peroyvind
 %patch6 -p1 -b .avoid-version
 %patch7 -p1 -b .version-info
@@ -555,6 +555,7 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/rlm_always.so
 %{_libdir}/%{name}/rlm_attr_filter.so
 %{_libdir}/%{name}/rlm_attr_rewrite.so
+%{_libdir}/%{name}/rlm_caching.so
 %{_libdir}/%{name}/rlm_chap.so
 %{_libdir}/%{name}/rlm_checkval.so
 %{_libdir}/%{name}/rlm_copy_packet.so
@@ -595,8 +596,11 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/rlm_python.so
 %{_libdir}/%{name}/rlm_radutmp.so
 %{_libdir}/%{name}/rlm_realm.so
+%{_libdir}/%{name}/rlm_replicate.so
+%{_libdir}/%{name}/rlm_ruby.so
 %{_libdir}/%{name}/rlm_sim_files.so
 %{_libdir}/%{name}/rlm_smsotp.so
+%{_libdir}/%{name}/rlm_soh.so
 %{_libdir}/%{name}/rlm_sqlcounter.so
 %{_libdir}/%{name}/rlm_sqlhpwippool.so
 %{_libdir}/%{name}/rlm_sqlippool.so
