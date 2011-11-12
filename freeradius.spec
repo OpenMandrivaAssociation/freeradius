@@ -176,7 +176,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch10 -p0 -b .linkage_fix
 %patch11 -p1 -b .file-temp
 %patch1 -p 1
-%patch12 -p0 -b .fix_broken_perl_ldflags
+%patch12 -p1 -b .fix_broken_perl_ldflags
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
