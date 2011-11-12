@@ -27,6 +27,7 @@ Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-server-2.1.8-ltdl_no_la.patch
 Patch10:	freeradius-server-linkage_fix.diff
 Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
+Patch12:	freeradius-server-2.1.12-fix_broken_perl_ldflags.diff
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
 BuildRequires:	libsasl-devel
@@ -175,6 +176,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch10 -p0 -b .linkage_fix
 %patch11 -p1 -b .file-temp
 %patch1 -p 1
+%patch12 -p0 -b .fix_broken_perl_ldflags
 
 # For pre release only:
 perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
