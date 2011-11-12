@@ -7,14 +7,13 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.11
+Version:	2.1.12
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
 Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
-Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
 Source4:	freeradius.init
 Source5:	freeradius.logrotate
@@ -63,7 +62,7 @@ server, but has many more features, and is much more configurable.
 Summary:	The Kerberos module for %{name}
 Group:		System/Servers
 Requires:	krb5-libs
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-krb5
 
 %description -n	%{name}-krb5
@@ -73,7 +72,7 @@ is necessary for that.
 %package -n	%{name}-ldap
 Summary:	The LDAP module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-ldap
 
 %description -n	%{name}-ldap
@@ -83,7 +82,7 @@ necessary for that.
 %package -n	%{name}-postgresql
 Summary:	The PostgreSQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-postgresql
 
 %description -n	%{name}-postgresql
@@ -93,7 +92,7 @@ accounting, and this module is necessary for that.
 %package -n	%{name}-mysql
 Summary:	The MySQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-mysql
 
 %description -n	%{name}-mysql
@@ -103,7 +102,7 @@ and this module is necessary for that.
 %package -n	%{name}-unixODBC
 Summary:	The unixODBC module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-unixODBC
 
 %description -n	%{name}-unixODBC
@@ -113,7 +112,7 @@ and this module is necessary for that.
 %package -n	%{name}-sqlite
 Summary:	The sqlite module for %{name}
 Group:		System/Servers
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Obsoletes:	%{libname}-sqlite
 
 %description -n	%{name}-sqlite
@@ -130,7 +129,7 @@ Libraries for %{name}
 %package -n	%{develname}
 Summary:	Development headers for %{name}
 Group:		Development/C
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} >= %{version}-%{release}
 Obsoletes:	%{mklibname -d %{name} 1}
 Provides:	freeradius-devel = %{version}-%{release}
 Obsoletes:	freeradius-devel
@@ -167,7 +166,7 @@ find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
-%patch0 -p1 -b .config
+%patch0 -p0 -b .config
 %patch4 -p0 -b .peroyvind
 %patch6 -p1 -b .avoid-version
 %patch7 -p1 -b .version-info
@@ -183,11 +182,7 @@ perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/rfc/Makefile
 
 %__install -d Mandriva
 # fix conditional pam config file
-%if %{mdkversion} < 200610
-cp %{SOURCE2} Mandriva/freeradius.pam
-%else
 cp %{SOURCE3} Mandriva/freeradius.pam
-%endif
 cp %{SOURCE4} Mandriva/%{name}.init
 cp %{SOURCE5} Mandriva/%{name}.logrotate
 
