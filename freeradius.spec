@@ -325,7 +325,7 @@ touch %{buildroot}%{_localstatedir}/log/radius/radius.log
 rm -f %{buildroot}%{_libdir}/%{name}/*%{version}*.la
 
 #remove buildroot from the libtool files:
-perl -pi -e "s,(\s)\S+$RPM_BUILD_DIR\S+,\$1,g" \
+perl -pi -e "s,(\s)\S+%{_builddir}\S+,\$1,g" \
     %{buildroot}%{_libdir}/%{name}/*.la 
 
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/build-radpaths-h
