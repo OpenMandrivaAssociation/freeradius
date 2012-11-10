@@ -1,0 +1,82 @@
+--- raddb/eap.conf	2011-09-30 16:12:07.000000000 +0200
++++ raddb/eap.conf.oden	2011-11-12 12:46:08.971675361 +0100
+@@ -152,11 +152,11 @@
+ 			#
+ 			#  These is used to simplify later configurations.
+ 			#
+-			certdir = ${confdir}/certs
+-			cadir = ${confdir}/certs
++			system_ssldir = /etc/pki/tls
++			local_ssldir = ${confdir}/certs
+ 
+-			private_key_password = whatever
+-			private_key_file = ${certdir}/server.pem
++			private_key_password = 
++			private_key_file = ${system_ssldir}/private/radiusd.pem
+ 
+ 			#  If Private key & Certificate are located in
+ 			#  the same file, then private_key_file &
+@@ -168,7 +168,7 @@
+ 			#  only the server certificate, but ALSO all
+ 			#  of the CA certificates used to sign the
+ 			#  server certificate.
+-			certificate_file = ${certdir}/server.pem
++			certificate_file = ${system_ssldir}/certs/radiusd.pem
+ 
+ 			#  Trusted Root CA list
+ 			#
+@@ -185,7 +185,7 @@
+ 			#  not use client certificates, and you do not want
+ 			#  to permit EAP-TLS authentication, then delete
+ 			#  this configuration item.
+-			CA_file = ${cadir}/ca.pem
++			CA_file = ${system_ssldir}/certs/ca-bundle.crt
+ 
+ 			#
+ 			#  For DH cipher suites to work, you have to
+@@ -193,8 +193,8 @@
+ 			#
+ 			#  	openssl dhparam -out certs/dh 1024
+ 			#
+-			dh_file = ${certdir}/dh
+-			random_file = ${certdir}/random
++			dh_file = ${local_ssldir}/dh
++			random_file = ${local_ssldir}/random
+ 
+ 			#
+ 			#  This can never exceed the size of a RADIUS
+@@ -225,7 +225,7 @@
+ 			#  3) uncomment the line below.
+ 			#  5) Restart radiusd
+ 		#	check_crl = yes
+-			CA_path = ${cadir}
++			CA_path = ${local_ssldir}
+ 
+ 		       #
+ 		       #  If check_cert_issuer is set, the value will
+@@ -265,25 +265,6 @@
+ 			cipher_list = "DEFAULT"
+ 
+ 			#
+-
+-			# This command creates the initial "snake oil"
+-			# certificates when the server is run as root,
+-			# and via "radiusd -X".
+-			#
+-			# As of 2.1.11, it *also* checks the server
+-			# certificate for validity, including expiration.
+-			# This means that radiusd will refuse to start
+-			# when the certificate has expired.  The alternative
+-			# is to have the 802.1X clients refuse to connect
+-			# when they discover the certificate has expired.
+-			#
+-			# Debugging client issues is hard, so it's better
+-			# for the server to print out an error message,
+-			# and refuse to start.
+-			#
+-			make_cert_command = "${certdir}/bootstrap"
+-
+-			#
+ 			#  Elliptical cryptography configuration
+ 			#
+ 			#  Only for OpenSSL >= 0.9.8.f

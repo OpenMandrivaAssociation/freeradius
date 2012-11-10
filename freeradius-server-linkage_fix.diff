@@ -1,0 +1,11 @@
+--- src/modules/rlm_eap/libeap/Makefile	2010-12-29 05:41:48.787665000 -0500
++++ src/modules/rlm_eap/libeap/Makefile.oden	2010-12-29 05:41:55.137665001 -0500
+@@ -29,7 +29,7 @@
+ $(TARGET).la: $(LT_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -version-info 1:0:0 \
+ 	$(LDFLAGS) $(LINK_MODE) -o $@ -rpath $(libdir) $^ \
+-	$(LIBRADIUS) $(LIBS)
++	$(LIBRADIUS) $(LIBS) $(OPENSSL_LIBS)
+ 	@for x in .libs/* $^; do \
+ 		rm -f $(top_builddir)/src/modules/lib/$$x; \
+ 		ln -s $(top_builddir)/src/modules/rlm_eap/libeap/$$x $(top_builddir)/src/modules/lib/$$x; \

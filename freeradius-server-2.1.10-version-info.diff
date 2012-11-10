@@ -1,0 +1,24 @@
+--- freeradius-server-2.1.10/src/modules/rlm_eap/libeap/Makefile	2010-09-28 07:03:56.000000000 -0400
++++ freeradius-server-2.1.10.oden/src/modules/rlm_eap/libeap/Makefile	2010-12-29 05:18:45.527665086 -0500
+@@ -27,7 +27,7 @@
+ all: $(TARGET).la
+ 
+ $(TARGET).la: $(LT_OBJS)
+-	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
++	$(LIBTOOL) --mode=link $(CC) -version-info 1:0:0 \
+ 	$(LDFLAGS) $(LINK_MODE) -o $@ -rpath $(libdir) $^ \
+ 	$(LIBRADIUS) $(LIBS)
+ 	@for x in .libs/* $^; do \
+--- freeradius-server-2.1.10/src/lib/Makefile.version-info	2011-05-02 10:20:53.000000000 +0200
++++ freeradius-server-2.1.10/src/lib/Makefile	2011-05-02 10:25:51.000000000 +0200
+@@ -41,8 +41,8 @@
+ all: $(TARGET).la
+ 
+ $(TARGET).la: $(LT_OBJS)
+-	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+-	$(LDFLAGS) $(LINK_MODE) -o $@ -rpath $(libdir) $^
++	$(LIBTOOL) --mode=link $(CC) -version-info 1:0:0 \
++	$(LDFLAGS) $(LINK_MODE) -o $@ -rpath $(libdir) $^ -pthread
+ 
+ $(LT_OBJS): $(INCLUDES)
+ 

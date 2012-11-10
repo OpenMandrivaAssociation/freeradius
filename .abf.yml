@@ -1,0 +1,7 @@
+sources:
+  "freeradius.init:"	744f487d3d0a7b91713616922112200e3f57a8a7
+  "freeradius.logrotate:"	47ef081f134f95664ca2d4c04ade05269a755bda
+  "freeradius.pam:"	0b0b3314ff0ba213dc2b75d74d03fd5c9f416eaa
+  "freeradius-server-2.1.12.tar.bz2:"	d80760f5ca854225e262954ce2505c22ef5fc6b2
+  "freeradius-server-2.1.12.tar.bz2.sig:"	228ce16850329aa0b112e18875e460abc8ab9e09
+  "freeradius.sysconfig:"	3f1431496232b732abef282e3fcf06f831f41b69
