@@ -40,7 +40,6 @@ BuildRequires:	pcap-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
-BuildRequires:	ruby-devel
 BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	sqlite3-devel
 BuildRequires:	unixODBC-devel
@@ -595,7 +594,6 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/rlm_radutmp.so
 %{_libdir}/%{name}/rlm_realm.so
 %{_libdir}/%{name}/rlm_replicate.so
-%{_libdir}/%{name}/rlm_ruby.so
 %{_libdir}/%{name}/rlm_sim_files.so
 %{_libdir}/%{name}/rlm_smsotp.so
 %{_libdir}/%{name}/rlm_soh.so
@@ -615,7 +613,6 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}
 %{_libdir}/%{name}/libfreeradius-radius.so
 %{_libdir}/%{name}/libfreeradius-eap.so
-%{_libdir}/%{name}/*.*a
 
 %files -n %{name}-web
 %defattr(-,root,root)
@@ -651,3 +648,365 @@ rm -rf %{buildroot}
 %{_bindir}/tot_stats
 %{_bindir}/truncate_radacct
 %{_datadir}/%{name}-web
+
+
+%changelog
+* Thu Dec 08 2011 Oden Eriksson <oeriksson@mandriva.com> 2.1.12-4mdv2012.0
++ Revision: 739190
+- rebuilt for new unixODBC (second try)
+- rebuilt for new unixODBC
+
+* Mon Nov 28 2011 Oden Eriksson <oeriksson@mandriva.com> 2.1.12-2
++ Revision: 734982
+- relink against new pcap
+
+* Sat Nov 12 2011 Oden Eriksson <oeriksson@mandriva.com> 2.1.12-1
++ Revision: 730297
+- whoops!
+- better fix
+- fix build
+- 2.1.12
+
+* Sat Jun 25 2011 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.11-1
++ Revision: 687125
+- new version
+
+* Mon May 02 2011 Funda Wang <fwang@mandriva.org> 2.1.10-6
++ Revision: 661954
+- fix building
+
+  + Oden Eriksson <oeriksson@mandriva.com>
+    - multiarch fixes
+
+* Thu Mar 17 2011 Oden Eriksson <oeriksson@mandriva.com> 2.1.10-5
++ Revision: 645745
+- relink against libmysqlclient.so.18
+
+* Sat Jan 01 2011 Oden Eriksson <oeriksson@mandriva.com> 2.1.10-4mdv2011.0
++ Revision: 627018
+- rebuilt against mysql-5.5.8 libs, again
+
+* Wed Dec 29 2010 Oden Eriksson <oeriksson@mandriva.com> 2.1.10-3mdv2011.0
++ Revision: 625969
+- fix build, %%make works fine locally with 8 cores but not in the bs
+- fix deps
+- major overhaul
+- rebuilt against mysql-5.5.8 libs
+
+  + Funda Wang <fwang@mandriva.org>
+    - rebuild for py2.7
+
+* Fri Oct 01 2010 Oden Eriksson <oeriksson@mandriva.com> 2.1.10-1mdv2011.0
++ Revision: 582364
+- 2.1.10
+
+* Mon Jul 19 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.9-1mdv2011.0
++ Revision: 554949
+- new version
+
+* Fri Apr 09 2010 Funda Wang <fwang@mandriva.org> 2.1.8-6mdv2010.1
++ Revision: 533319
+- rebuild
+
+* Mon Mar 01 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.8-5mdv2010.1
++ Revision: 513129
+- fix installation dependencies
+
+* Fri Feb 26 2010 Oden Eriksson <oeriksson@mandriva.com> 2.1.8-4mdv2010.1
++ Revision: 511567
+- rebuilt against openssl-0.9.8m
+
+* Thu Feb 18 2010 Oden Eriksson <oeriksson@mandriva.com> 2.1.8-3mdv2010.1
++ Revision: 507458
+- rebuild
+
+* Tue Feb 16 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.8-2mdv2010.1
++ Revision: 506695
+- change default permissions for configuration files, only restrict those containing passwords
+
+* Tue Jan 12 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.8-1mdv2010.1
++ Revision: 490250
+- new version
+
+* Sat Jan 09 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.7-4mdv2010.1
++ Revision: 488013
+- no need to explicit calls to %%_post_webapp/%%_postun_webapp, we have filetriggers now
+- don't forget to apply patch...
+
+* Sat Jan 09 2010 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.7-3mdv2010.1
++ Revision: 487978
+- fix scripts shipped in freeradius-web package (bud #56866)
+
+* Fri Oct 09 2009 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.7-2mdv2010.0
++ Revision: 456255
+- move crontab in scripts, and install them in /etc/cron/{daily,monthly} (#46739)
+
+* Sun Sep 20 2009 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.7-1mdv2010.0
++ Revision: 445976
+- new version
+- spec cleanup
+- install web files under %%{_datadir}/freeradius-web
+- fix initscript LSB dependency
+
+* Thu Jun 11 2009 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.6-1mdv2010.0
++ Revision: 385293
+- new version
+
+* Tue Mar 17 2009 Guillaume Rousse <guillomovitch@mandriva.org> 2.1.4-1mdv2009.1
++ Revision: 356678
+- rediff fuzzy patch
+- force system libtool usage
+- new version
+- fix perms on some config files
+
+* Sat Dec 27 2008 Funda Wang <fwang@mandriva.org> 2.1.3-3mdv2009.1
++ Revision: 319937
+- rebuild for new python
+
+* Wed Dec 17 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.3-2mdv2009.1
++ Revision: 315153
+- bump release
+- rediffed fuzzy patches
+
+* Mon Dec 08 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.3-1mdv2009.1
++ Revision: 311824
+- 2.1.3 (fixes CVE-2008-4474)
+- rediffed P10
+
+* Mon Dec 08 2008 Funda Wang <fwang@mandriva.org> 2.1.1-3mdv2009.1
++ Revision: 311797
+- rebuild for new mysql
+
+* Wed Oct 29 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.1-2mdv2009.1
++ Revision: 298254
+- rebuilt against libpcap-1.0.0
+
+* Wed Oct 15 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.1-1mdv2009.1
++ Revision: 293908
+- fix build
+- 2.1.1
+
+* Sun Sep 07 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.0-2mdv2009.0
++ Revision: 282138
+- bump release
+- fix deps
+- provide dialup_admin as the freeradius-web subpackage
+
+* Fri Sep 05 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.0-1mdv2009.0
++ Revision: 281123
+- 2.1.0
+- rediffed P0
+
+* Tue Aug 19 2008 Oden Eriksson <oeriksson@mandriva.com> 2.0.5-1mdv2009.0
++ Revision: 273882
+- 2.0.5
+- use _disable_ld_no_undefined due to ugly autopoo
+- rediffed P0
+- fix some linking (P10)
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild early 2009.0 package (before pixel changes)
+
+* Wed Apr 30 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.3-1mdv2009.0
++ Revision: 199400
+- new version
+  clean file section
+
+* Tue Apr 22 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-8mdv2009.0
++ Revision: 196536
+- fix cert file names in configuration
+
+* Thu Apr 10 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-7mdv2009.0
++ Revision: 192550
+- don't hardcode options in the init script, it breaks
+
+* Mon Mar 24 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-6mdv2008.1
++ Revision: 189765
+- fix dependencies from krb5 plugin
+
+* Fri Feb 15 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-5mdv2008.1
++ Revision: 168812
+- rebuild with fixed version of rpm-helper
+
+* Wed Feb 13 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-4mdv2008.1
++ Revision: 166947
+- add versioned build dependency on rpm-helper
+- fix %%post
+
+* Sun Jan 27 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-3mdv2008.1
++ Revision: 158717
+- use new create ssl certificate helper macro interface
+
+* Wed Jan 23 2008 Thierry Vignaud <tv@mandriva.org> 2.0.0-2mdv2008.1
++ Revision: 157250
+- rebuild with fixed %%serverbuild macro
+
+* Thu Jan 17 2008 Guillaume Rousse <guillomovitch@mandriva.org> 2.0.0-1mdv2008.1
++ Revision: 154222
+- spec cleanup
+- plugins package renaming, as they are not concerned by lib policy naming
+- devel policy compliance
+- library package doesn't need main package, but devel package requires library package
+- new version
+  rediff patches 0, 6 and 8
+  drop useless patch 5
+  post-installation ssl configuration, according to ssl policy
+
+* Sat Jan 12 2008 Thierry Vignaud <tv@mandriva.org> 1.1.7-3mdv2008.1
++ Revision: 150082
+- rebuild
+- kill re-definition of %%buildroot on Pixel's request
+
+  + Olivier Blin <blino@mandriva.org>
+    - restore BuildRoot
+
+* Tue Sep 18 2007 Guillaume Rousse <guillomovitch@mandriva.org> 1.1.7-2mdv2008.0
++ Revision: 89646
+- rebuild
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - s/Mandrake/Mandriva/
+
+* Fri Aug 17 2007 Guillaume Rousse <guillomovitch@mandriva.org> 1.1.7-1mdv2008.0
++ Revision: 64984
+- rewrite init script
+- revert wrong previous commiy
+- fix automatic perl dependency
+- new version
+
+* Thu Jun 28 2007 Andreas Hasenack <andreas@mandriva.com> 1.1.6-2mdv2008.0
++ Revision: 45543
+- rebuild with new serverbuild macro (-fstack-protector-all)
+
+* Mon May 28 2007 Andreas Hasenack <andreas@mandriva.com> 1.1.6-1mdv2008.0
++ Revision: 32081
+- updated to version 1.1.6
+- removed enormous libtool patch
+- removed security patch that was already applied
+
+* Thu Apr 19 2007 Oden Eriksson <oeriksson@mandriva.com> 1.1.2-6mdv2008.0
++ Revision: 14940
+- P10: security fix for CVE-2007-2028
+
+
+* Mon Jan 15 2007 Andreas Hasenack <andreas@mandriva.com> 1.1.2-5mdv2007.0
++ Revision: 109065
+- fixed rpm group for library and devel package (#28162)
+
+* Fri Jan 05 2007 Andreas Hasenack <andreas@mandriva.com> 1.1.2-4mdv2007.1
++ Revision: 104506
+- rebuild with python 2.5
+
+  + Oden Eriksson <oeriksson@mandriva.com>
+    - bzip2 cleanup
+    - bunzip sources
+    - Import freeradius
+
+* Tue Sep 05 2006 Oden Eriksson <oeriksson@mandriva.com> 1.1.2-1mdv2007.0
+- rebuilt against MySQL-5.0.24a-1mdv2007.0 due to ABI changes
+
+* Thu Jun 08 2006 Oden Eriksson <oeriksson@mandriva.com> 1.1.2-1mdv2007.0
+- 1.2.2
+- rediffed P5,P6
+- dropped upstream patches; P9,P10,P11
+- added libtool fixes (P3, by debian)
+- re-added the dl patch (P9, by fedora)
+- make it backportable for older pam (S2,S3)
+
+* Wed Mar 29 2006 Oden Eriksson <oeriksson@mandriva.com> 1.1.0-3mdk
+- added P11 to fix CVE-2006-1354
+
+* Fri Jan 27 2006 Oden Eriksson <oeriksson@mandriva.com> 1.1.0-2mdk
+- fix one packaging bug introduced in 1.0.0-pre3.4mdk
+- fix deps
+
+* Sun Jan 15 2006 Oden Eriksson <oeriksson@mandriva.com> 1.1.0-1mdk
+- 1.1.0
+- droped upstream/obsolete patches; P7, P10
+- fix deps
+- added P10 from http://bugs.freeradius.org/show_bug.cgi?id=312
+
+* Fri Jan 06 2006 Oden Eriksson <oeriksson@mandriva.com> 1.0.5-2mdk
+- rebuilt due to package loss
+
+* Mon Nov 14 2005 Oden Eriksson <oeriksson@mandriva.com> 1.0.5-1mdk
+- 1.0.5
+- sync with fedora; P8,P9,P10 (1.0.4-5)
+- drop redundant patches; P3
+- rediffed patches; P5,P6
+- use bundled libtool, otherwise it won't build
+
+* Wed Aug 31 2005 Oden Eriksson <oeriksson@mandriva.com> 1.0.4-2mdk
+- rebuilt against new openldap-2.3.6 libs
+- pass "-DLDAP_DEPRECATED" to the CFLAGS
+
+* Mon Jun 20 2005 Oden Eriksson <oeriksson@mandriva.com> 1.0.4-1mdk
+- 1.0.4
+- fix deps
+
+* Fri Jun 10 2005 Buchan Milne <bgmilne@linux-mandrake.com> 1.0.2-4mdk
+- Rebuild for libkrb53-devel 1.4.1
+- clean build dir paths from libtool files
+
+* Sat May 21 2005 Rafael Garcia-Suarez <rgarciasuarez@mandriva.com> 1.0.2-3mdk
+- rebuild for new perl
+
+* Mon Apr 18 2005 Oden Eriksson <oeriksson@mandriva.com> 1.0.2-2mdk
+- fix build on x86_64
+- rediff P3,P6
+
+* Sat Apr 09 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.0.2-1mdk
+- 1.0.2
+- use the %%mkrel macro
+- misc rpmlint fixes
+
+* Mon Jan 31 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.0.0-6mdk
+- fix deps and conditional %%multiarch
+
+* Mon Jan 24 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.0.0-5mdk
+- rebuilt against MySQL-4.1.x system libs
+
+* Tue Dec 07 2004 Michael Scherer <misc@mandrake.org> 1.0.0-4mdk
+- Rebuild for new python
+
+* Thu Sep 02 2004 Arnaud de Lorbeau <adelorbeau@mandrakesoft.com> 1.0.0-3mdk
+- add obsolete/provide to new libpackages
+
+* Thu Sep 02 2004 Gwenole Beauchesne <gbeauchesne@mandrakesoft.com> 1.0.0-2mdk
+- fix build
+
+* Fri Aug 20 2004 Arnaud de Lorbeau <adelorbeau@mandrakesoft.com> 1.0.0-1mdk
+- 1.0.0
+
+* Mon Aug 02 2004 Arnaud de Lorbeau <adelorbeau@mandrakesoft.com> 1.0.0-pre3.4mdk
+- new release
+- package libification
+
+* Mon May 03 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 0.9.3-8mdk
+- fix the %%vendor and %%distribution string
+
+* Mon Apr 19 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 0.9.3-7mdk
+- fix changelog and some rpmlint errors
+
+* Mon Apr 19 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 0.9.3-6mdk
+- added P6 because that's what it's really asking for... (fix #6797 ?)
+
+* Sat Apr 03 2004 Tibor Pittich <Tibor.Pittich@mandrake.org> 0.9.3-5mdk
+- remove dirty tricks with rlm_ldap, fixed on openldap package
+- incerease rpm build - problem with previous error in changelog
+
+* Sun Feb 22 2004 Tibor Pittich <Tibor.Pittich@mandrake.org> 0.9.3-2mdk
+- updated to 0.9.3
+- freeradius requires openldap2-devel/libs and sasl2-devel/libs
+- some macroszification in configure stage
+- remove duplicate --with-system-libtool from configure macro
+- remove --enable-developer from configure macro, we are users :)
+- added dirty trick to allow build rlm_ldap; somewhere is problem caused that
+  libtool only here can't find liblber.la and libsasl2.la
+- /var/log/radius as --with-logdir
+- some cleanup
+
+* Fri Jan 30 2004 Tibor Pittich <Tibor.Pittich@mandrake.org> 0.9.3-1mdk
+- fixed freeradius-mysql and freeradius-unixODBC packages to really include so
+  library not only symlink
+

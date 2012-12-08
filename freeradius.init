@@ -1,0 +1,80 @@
+#!/bin/sh
+
+# chkconfig: 345 88 10
+# description: Start/Stop the Free RADIUS server daemon
+
+### BEGIN INIT INFO
+# Provides: radiusd
+# Should-Start: $network
+# Should-Stop: $network
+# Default-Start: 345
+# Short-Description: Starts the Free RADIUS server daemon
+# Description: This startup script launches the Free RADIUS server daemon
+### END INIT INFO
+
+# Local variables
+NAME=freeradius
+BINARY=radiusd
+PROCESS=radiusd
+RADIUSD_OPTIONS=""
+LOCKFILE=/var/lock/subsys/radius
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+# load service configuration
+[ -f /etc/sysconfig/radiusd ] && . /etc/sysconfig/radiusd
+
+start() {
+    rc=0
+    if [ ! -f $LOCKFILE ]; then
+	echo -n "Starting $NAME"
+	daemon "$BINARY $RADIUSD_OPTIONS >/dev/null 2>&1"
+	rc=$?
+	[ $rc -eq 0 ] && touch $LOCKFILE
+	echo
+    fi
+    return $rc
+}
+
+stop() {
+    echo -n "Stopping $NAME"
+    killproc $PROCESS
+    rc=$?
+    [ $rc -eq 0 ] && rm -f $LOCKFILE
+    echo
+    return $rc
+}
+
+restart() {
+    stop
+    start
+}
+
+# See how we were called.
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status $PROCESS
+	;;
+    restart|reload)
+	restart
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|restart|reload}"
+	exit 1
+	;;
+esac
+
+exit $?
