@@ -31,7 +31,7 @@ Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
 Patch12:	freeradius-server-2.1.12-fix_broken_perl_ldflags.diff
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
-BuildRequires:	libsasl-devel
+BuildRequires:	sasl-devel
 BuildRequires:	libtool-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
