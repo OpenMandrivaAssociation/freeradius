@@ -4,12 +4,12 @@
 %define libname %mklibname freeradius %{major}
 %define develname %mklibname -d freeradius
 
-%define _noautoreq 'perl\\(DBI\\)'
+%define __noautoreq 'perl\\(DBI\\)'
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.1.12
-Release:	5
+Release:	6
 License:	GPL
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -428,18 +428,7 @@ fi
 %postun
 %_postun_userdel radius
 
-%post web
-%if %mdkversion < 201010
-%_post_webapp
-%endif
-
-%postun web
-%if %mdkversion < 201010
-%_postun_webapp
-%endif
-
 %clean
-rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
