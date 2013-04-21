@@ -1,5 +1,5 @@
---- raddb/ldap.attrmap	2010-09-28 13:03:56.000000000 +0200
-+++ raddb/ldap.attrmap.oden	2010-10-01 19:52:43.824544035 +0200
+--- ./raddb/ldap.attrmap	2010-09-28 13:03:56.000000000 +0200
++++ ./raddb/ldap.attrmap.oden	2010-10-01 19:52:43.824544035 +0200
 @@ -40,6 +40,7 @@ checkItem	NT-Password			sambaNtPassword
  checkItem	LM-Password			dBCSPwd
  checkitem	Password-With-Header		userPassword

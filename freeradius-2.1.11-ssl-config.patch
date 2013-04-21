@@ -1,5 +1,5 @@
---- raddb/eap.conf	2011-09-30 16:12:07.000000000 +0200
-+++ raddb/eap.conf.oden	2011-11-12 12:46:08.971675361 +0100
+--- ./raddb/eap.conf	2011-09-30 16:12:07.000000000 +0200
++++ ./raddb/eap.conf.oden	2011-11-12 12:46:08.971675361 +0100
 @@ -152,11 +152,11 @@
  			#
  			#  These is used to simplify later configurations.
