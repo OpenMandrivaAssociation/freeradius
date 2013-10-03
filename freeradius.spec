@@ -128,6 +128,7 @@ Development headers and libraries for %{name}
 Summary:	Web based administration interface for freeradius
 Group:		System/Servers
 Requires:	apache-mod_php
+Requires:   apache-mod_socache_shmcb
 Requires:	freeradius
 Requires:	php-mysql
 Requires:	net-snmp-mibs
