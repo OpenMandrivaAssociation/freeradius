@@ -349,7 +349,7 @@ cat > %{buildroot}%{_webappconfdir}/%{name}-web.conf <<EOF
 Alias /%{name}-web %{_datadir}/%{name}-web
 
 <Directory %{_datadir}/%{name}-web>
-    Allow from all
+    Require all granted
 </Directory>
 EOF
 
