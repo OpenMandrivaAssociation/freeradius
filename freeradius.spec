@@ -48,7 +48,7 @@ BuildRequires:	postgresql-devel
 BuildRequires:	rpm-helper
 BuildRequires:	unixODBC-devel
 BuildRequires:	pkgconfig(openssl)
-BuildRequires:	pkgconfig(python)
+BuildRequires:	pkgconfig(python2)
 BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(zlib)
 # minimal version for ssl cert generation
