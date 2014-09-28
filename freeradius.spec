@@ -1,34 +1,40 @@
 %define _disable_ld_no_undefined 1
 %define __noautoreq 'perl\\(DBI\\)'
 
-%define major	1
+%define major 1
 %define libname %mklibname freeradius %{major}
-%define devname %mklibname -d freeradius
+%define develname %mklibname -d freeradius
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.1.12
-Release:	14
-License:	GPLv2
+Version:	2.2.3
+Release:	1
+License:	GPLv2+
 Group:		System/Servers
-Url:		http://www.freeradius.org/
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2
-Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.bz2.sig
+URL:		http://www.freeradius.org/
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
+Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
+Source2:	freeradius.pam-0.77
 Source3:	freeradius.pam
-Source4:	freeradius.init
 Source5:	freeradius.logrotate
 Source6:	freeradius.sysconfig
+Source7:	freeradius.service
+Source8:	freeradius.tmpfiles
+# http://code.google.com/p/freeradius-yubikey-module/
+Source9:	rlm_yubikey.tar.gz
+# Fix certificate location
 Patch0:		freeradius-2.1.11-ssl-config.patch
 Patch1:		freeradius-server-2.1.6-fix-format-errors.patch
+Patch2:		freeradius-2.2.0-ruby1.9-dir.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
-Patch6:		freeradius-server-2.1.10-avoid-version.diff
+Patch6:		freeradius-server-2.2.0-avoid-version.diff
 Patch7:		freeradius-server-2.1.10-version-info.diff
 Patch8:		freeradius-2.0.0-samba3.patch
 Patch9:		freeradius-server-2.1.8-ltdl_no_la.patch
 Patch10:	freeradius-server-linkage_fix.diff
 Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
-Patch12:	freeradius-server-2.1.12-fix_broken_perl_ldflags.diff
-
+Patch12:	freeradius-server-2.2.0-yubico-paths.diff
+Patch13:	freeradius-server-2.2.3-strfmt.diff
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
 BuildRequires:	sasl-devel
@@ -39,14 +45,15 @@ BuildRequires:	pam-devel
 BuildRequires:	pcap-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
+BuildRequires:	rpm-helper
 BuildRequires:	unixODBC-devel
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(python)
 BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(zlib)
 # minimal version for ssl cert generation
-Requires(post):	openssl
-Requires(post,preun,pre,postun):	rpm-helper
+Requires(post): openssl
+Requires(post,preun,pre,postun):  rpm-helper
 
 %description
 The FreeRADIUS Server Project is a high-performance and highly configurable
@@ -57,7 +64,7 @@ server, but has many more features, and is much more configurable.
 Summary:	The Kerberos module for %{name}
 Group:		System/Servers
 Requires:	krb5-libs
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-krb5
 The FreeRADIUS server can use Kerberos to authenticate users, and this module
@@ -66,7 +73,7 @@ is necessary for that.
 %package -n	%{name}-ldap
 Summary:	The LDAP module for %{name}
 Group:		System/Servers
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-ldap
 The FreeRADIUS server can use LDAP to authenticate users, and this module is
@@ -75,7 +82,7 @@ necessary for that.
 %package -n	%{name}-postgresql
 Summary:	The PostgreSQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-postgresql
 The FreeRADIUS server can use PostgreSQL to authenticate users and do
@@ -84,7 +91,7 @@ accounting, and this module is necessary for that.
 %package -n	%{name}-mysql
 Summary:	The MySQL module for %{name}
 Group:		System/Servers
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-mysql
 The FreeRADIUS server can use MySQL to authenticate users and do accounting,
@@ -93,7 +100,7 @@ and this module is necessary for that.
 %package -n	%{name}-unixODBC
 Summary:	The unixODBC module for %{name}
 Group:		System/Servers
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-unixODBC
 The FreeRADIUS server can use unixODBC to authenticate users and do accounting,
@@ -102,10 +109,19 @@ and this module is necessary for that.
 %package -n	%{name}-sqlite
 Summary:	The sqlite module for %{name}
 Group:		System/Servers
-Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description -n	%{name}-sqlite
 The FreeRADIUS server can use sqlite to authenticate users and do accounting,
+and this module is necessary for that.
+
+%package -n	%{name}-yubikey
+Summary:	The yubikey module for %{name}
+Group:		System/Servers
+Requires:	%{name} = %{version}-%{release}
+
+%description -n	%{name}-yubikey
+The FreeRADIUS server can use yubikey to authenticate users and do accounting,
 and this module is necessary for that.
 
 %package -n	%{libname}
@@ -115,20 +131,20 @@ Group:		System/Libraries
 %description -n	%{libname}
 Libraries for %{name}
 
-%package -n	%{devname}
+%package -n	%{develname}
 Summary:	Development headers for %{name}
 Group:		Development/C
-Requires:	%{libname} >= %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
+Obsoletes:	%{mklibname -d %{name} 1}
 Provides:	freeradius-devel = %{version}-%{release}
 
-%description -n	%{devname}
+%description -n	%{develname}
 Development headers and libraries for %{name}
 
 %package web
 Summary:	Web based administration interface for freeradius
 Group:		System/Servers
 Requires:	apache-mod_php
-Requires:   apache-mod_socache_shmcb
 Requires:	freeradius
 Requires:	php-mysql
 Requires:	net-snmp-mibs
@@ -142,34 +158,46 @@ information is stored in an ldap server or an sql database and accounting in an
 sql server.
 
 %prep
-%setup -qn %{name}-server-%{version}
-%apply_patches
+%setup -q -n %{name}-server-%{version}
+
+# add the yubikey plugin from http://code.google.com/p/freeradius-yubikey-module/
+tar -zxf %{SOURCE9}
+mv freeradius-yubikey-module-read-only src/modules/rlm_yubikey
 
 # fix strange perms
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
-# For pre release only:
-sed -i -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
-sed -i -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/rfc/Makefile
+%patch0 -p1 -b .config
+%patch2 -p0 -b .ruby
+%patch4 -p1 -b .peroyvind
+%patch6 -p1 -b .avoid-version
+%patch7 -p1 -b .version-info
+%patch8 -p0 -b .samba3
+%patch9 -p1 -b .ltdl_no_la
+%patch10 -p0 -b .linkage_fix
+%patch11 -p1 -b .file-temp
+%patch1 -p 1
+%patch12 -p0
+%patch13 -p0
 
-install -d Mandriva
-# fix conditional pam config file
-cp %{SOURCE3} Mandriva/freeradius.pam
-cp %{SOURCE4} Mandriva/%{name}.init
-cp %{SOURCE5} Mandriva/%{name}.logrotate
+./autogen.sh
+
+# For pre release only:
+perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/Makefile
+perl -pi -e 's,\$\(RADIUSD_VERSION\),%{version},' doc/rfc/Makefile
 
 # fix path
-find . -type f | xargs sed -i -e "s|/usr/local/bin|%{_bindir}|g"
+find . -type f | xargs perl -pi -e "s|/usr/local/bin|%{_bindir}|g"
 
 # move php3 to php
 find dialup_admin -name '*.php3' | while read php3; do
-	mv $php3 ${php3%%.php3}.php
+    mv $php3 ${php3%%.php3}.php
 done
 
-find dialup_admin -type f | xargs sed -i -e "s|\.php3|\.php|g"
-sed -i -e "s|\\\${bindir}|\\\${bindir}/|g" dialup_admin/Makefile
+find dialup_admin -type f | xargs perl -pi -e "s|\.php3|\.php|g"
+perl -pi -e "s|\\\${bindir}|\\\${bindir}/|g" dialup_admin/Makefile
 
 %build
 %serverbuild
@@ -178,86 +206,86 @@ export CFLAGS="$CFLAGS -fPIC -DLDAP_DEPRECATED"
 export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
 
 %configure2_5x \
-	--with-gnu-ld \
-	--with-threads \
-	--with-thread-pool \
-	--with-system-libtool \
-	--libdir=%{_libdir}/%{name}  \
-	--libexecdir=%{_libdir}/%{name} \
-	--localstatedir=%{_var} \
-	--with-logdir=%{_var}/log/radius \
-	--disable-ltdl-install \
-	--with-ltdl-lib=%{_libdir} \
-	--with-ltdl-include=%{_includedir} \
-	--with-radacctdir=%{_var}/log/radius/radacct \
-	--with-raddbdir=%{_sysconfdir}/raddb \
-	--with-static-modules="" \
-	--with-experimental-modules \
-	--with-large-files \
-	--with-rlm-dbm-lib-dir=%{_libdir} \
-	--with-rlm-eap-peap-lib-dir=%{_libdir} \
-	--with-openssl-libraries=%{_libdir} \
-	--with-rlm-krb5-lib-dir=%{_libdir} \
-	--with-rlm-ldap-lib-dir=%{_libdir} \
-	--with-rlm-ldap-include-dir=%{_includedir}/ldap \
-	--with-mysql-include-dir=%{_includedir}/mysql \
-	--with-mysql-lib-dir=%{_libdir}/mysql \
-	--with-mysql-dir=%{_prefix} \
-	--with-rlm-sql-postgresql-lib-dir=%{_libdir}/mysql \
-	--with-rlm-sql-postgresql-include-dir=%{_includedir}/pgsql \
-	--with-unixodbc-lib-dir=%{_libdir} \
-	--with-unixodbc-dir=%{_prefix} \
-	--without-rlm_sql_db2 \
-	--without-rlm_sql_firebird \
-	--without-rlm_sql_freetds \
-	--without-rlm_sql_iodbc \
-	--without-rlm_sql_oracle \
-	--without-rlm_sql_sybase \
+    --with-gnu-ld \
+    --with-threads \
+    --with-thread-pool \
+    --with-system-libtool \
+    --with-system-libltdl \
+    --disable-static \
+    --libdir=%{_libdir}/%{name}  \
+    --libexecdir=%{_libdir}/%{name} \
+    --localstatedir=%{_var} \
+    --with-logdir=%{_var}/log/radius \
+    --disable-ltdl-install \
+    --with-ltdl-lib=%{_libdir} \
+    --with-ltdl-include=%{_includedir} \
+    --with-radacctdir=%{_var}/log/radius/radacct \
+    --with-raddbdir=%{_sysconfdir}/raddb \
+    --with-static-modules="" \
+    --with-experimental-modules \
+    --with-large-files \
+    --with-rlm-dbm-lib-dir=%{_libdir} \
+    --with-rlm-eap-peap-lib-dir=%{_libdir} \
+    --with-openssl-libraries=%{_libdir} \
+    --with-rlm-ruby-include-dir=%{_includedir}/ruby \
+    --with-rlm-krb5-lib-dir=%{_libdir} \
+    --with-rlm-ldap-lib-dir=%{_libdir} \
+    --with-rlm-ldap-include-dir=%{_includedir}/ldap \
+    --with-mysql-include-dir=%{_includedir}/mysql \
+    --with-mysql-lib-dir=%{_libdir}/mysql \
+    --with-mysql-dir=%{_prefix} \
+    --with-rlm-sql-postgresql-lib-dir=%{_libdir}/mysql \
+    --with-rlm-sql-postgresql-include-dir=%{_includedir}/pgsql \
+    --with-unixodbc-lib-dir=%{_libdir} \
+    --with-unixodbc-dir=%{_prefix} \
+    --without-rlm_sql_db2 \
+    --without-rlm_sql_firebird \
+    --without-rlm_sql_freetds \
+    --without-rlm_sql_iodbc \
+    --without-rlm_sql_oracle \
+    --without-rlm_sql_sybase \
 
 # enable this one with a hack...
-sed -i \
-	-e "s|^TARGET.*|TARGET=rlm_dbm|g;" \
-	-e "s|^SRCS.*|SRCS=rlm_dbm.c|g;" \
-	-e "s|^RLM_UTILS.*|RLM_UTILS=rlm_dbm_parser rlm_dbm_cat|g;" \
-	-e "s|^RLM_CFLAGS.*|RLM_CFLAGS=-I%{_includedir}/gdbm -DHAVE_GDBM_NDBM_H|g;" \
-	-e "s|^RLM_LIBS.*|RLM_LIBS=-L%{_libdir} -lgdbm -lgdbm_compat|g;" \
-	-e "s|^RLM_INSTALL.*|RLM_INSTALL=rlm_dbm_install|g;" \
-	src/modules/rlm_dbm/Makefile
+perl -pi \
+    -e "s|^TARGET.*|TARGET=rlm_dbm|g;" \
+    -e "s|^SRCS.*|SRCS=rlm_dbm.c|g;" \
+    -e "s|^RLM_UTILS.*|RLM_UTILS=rlm_dbm_parser rlm_dbm_cat|g;" \
+    -e "s|^RLM_CFLAGS.*|RLM_CFLAGS=-I%{_includedir}/gdbm -DHAVE_GDBM_NDBM_H|g;" \
+    -e "s|^RLM_LIBS.*|RLM_LIBS=-L%{_libdir} -lgdbm -lgdbm_compat|g;" \
+    -e "s|^RLM_INSTALL.*|RLM_INSTALL=rlm_dbm_install|g;" \
+    src/modules/rlm_dbm/Makefile
 
 %if "%{_lib}" == "lib64"
-sed -i -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
+    perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
 make
 
 %install
-install -d -m 755 %{buildroot}%{_sysconfdir}/logrotate.d
-install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
-install -d -m 755 %{buildroot}%{_sysconfdir}/sysconfig
-install -d -m 755 %{buildroot}%{_initrddir}
-install -d -m 755 %{buildroot}%{_localstatedir}/run/radiusd
-install -d -m 755 %{buildroot}%{_includedir}/%{name}
-
 make install R=%{buildroot}
+
+install -d %{buildroot}%{_sysconfdir}/raddb/yubico
 
 # fix default configuration file permissions
 find %{buildroot}%{_sysconfdir}/raddb -type d | xargs chmod 755
 find %{buildroot}%{_sysconfdir}/raddb -type f | xargs chmod 644
 chmod 640 \
-	%{buildroot}%{_sysconfdir}/raddb/acct_users \
-	%{buildroot}%{_sysconfdir}/raddb/acct_users \
-	%{buildroot}%{_sysconfdir}/raddb/clients.conf \
-	%{buildroot}%{_sysconfdir}/raddb/preproxy_users \
-	%{buildroot}%{_sysconfdir}/raddb/users \
+    %{buildroot}%{_sysconfdir}/raddb/acct_users \
+    %{buildroot}%{_sysconfdir}/raddb/acct_users \
+    %{buildroot}%{_sysconfdir}/raddb/clients.conf \
+    %{buildroot}%{_sysconfdir}/raddb/preproxy_users \
+    %{buildroot}%{_sysconfdir}/raddb/users \
 
 # install headers
+install -d -m 755 %{buildroot}%{_includedir}/%{name}
 install -m 644 src/include/*  %{buildroot}%{_includedir}/%{name}/
 
-# install Mandriva scripts and stuff...
-install -m 644 Mandriva/%{name}.pam %{buildroot}%{_sysconfdir}/pam.d/radiusd
-install -m 644 Mandriva/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
-install -m 755 Mandriva/%{name}.init %{buildroot}%{_initrddir}/radiusd
-install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/radiusd
+# install distribution scripts and stuff...
+install -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/pam.d/radiusd
+install -D -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/logrotate.d/radiusd
+install -D -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/radiusd
+install -D -m 644 %{SOURCE7} %{buildroot}%{_unitdir}/radiusd.service
+install -D -m 644 %{SOURCE8} %{buildroot}%{_prefix}/lib/tmpfiles.d/radiusd.conf
 
 # put the mibs in place
 install -d -m 755 %{buildroot}%{_datadir}/snmp/mibs
@@ -276,8 +304,8 @@ rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/mssql
 rm -rf %{buildroot}%{_sysconfdir}/raddb/sql/oracle
 rm -f %{buildroot}%{_sysconfdir}/raddb/certs/*
 
-# remove faulty perl file...
-rm -f %{buildroot}%{_libdir}/%{name}/rlm_perl.a
+find %{buildroot} -name '*.la' -delete
+rm -f %{buildroot}%{_libdir}/%{name}/*.a
 
 # include more docs
 cp src/modules/rlm_sql/README README.sql
@@ -291,13 +319,6 @@ cp doc/rlm_krb5 .
 cp doc/RADIUS*.schema .
 cp doc/rlm_ldap .
 
-# nuke useless dupes
-rm -f %{buildroot}%{_libdir}/%{name}/*%{version}*.la
-
-#remove buildroot from the libtool files:
-sed -i -e "s,(\s)\S+%{_builddir}\S+,\$1,g" \
-	%{buildroot}%{_libdir}/%{name}/*.la 
-
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/build-radpaths-h
 
 %multiarch_includes %{buildroot}%{_includedir}/freeradius/radpaths.h
@@ -308,27 +329,27 @@ install -d %{buildroot}%{_sysconfdir}/%{name}-web
 
 pushd dialup_admin
 make \
-	DIALUP_PREFIX=%{buildroot}%{_datadir}/freeradius-web \
-	DIALUP_DOCDIR=%{buildroot}%{_docdir}/freeradius-web \
-	DIALUP_CONFDIR=%{buildroot}%{_sysconfdir}/freeradius-web \
-	install
+    DIALUP_PREFIX=%{buildroot}%{_datadir}/freeradius-web \
+    DIALUP_DOCDIR=%{buildroot}%{_docdir}/freeradius-web \
+    DIALUP_CONFDIR=%{buildroot}%{_sysconfdir}/freeradius-web \
+    install
 popd
 
-find %{buildroot}%{_datadir}/freeradius-web | xargs perl -p -i \
-	-e 's|\.\./conf/config\.php|%{_sysconfdir}/freeradius-web/config\.php|g;' \
-	-e 's|%{buildroot}||g;'
+find %{buildroot}%{_datadir}/freeradius-web | xargs perl -pi \
+    -e 's|\.\./conf/config\.php|%{_sysconfdir}/freeradius-web/config\.php|g;' \
+    -e 's|%{buildroot}||g;'
 
-find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -p -i \
-	-e 's|\.\./conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
-	-e 's|%{buildroot}||g;'
+find %{buildroot}%{_sysconfdir}/freeradius-web | xargs perl -pi \
+    -e 's|\.\./conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
+    -e 's|%{buildroot}||g;'
 
-find %{buildroot}%{_datadir}/freeradius-web/bin | xargs perl -p -i \
-	-e 's|/data/local/dialupadmin/conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
-	-e 's|/logs/radiusd/accounting|%{_localstatedir}/log/radius/accounting|g;'
+find %{buildroot}%{_datadir}/freeradius-web/bin | xargs perl -pi \
+    -e 's|/data/local/dialupadmin/conf/admin\.conf|%{_sysconfdir}/freeradius-web/admin\.conf|g;' \
+    -e 's|/logs/radiusd/accounting|%{_localstatedir}/log/radius/accounting|g;'
 
 mv %{buildroot}%{_datadir}/freeradius-web/bin/* %{buildroot}%{_bindir}
 mv %{buildroot}%{_bindir}/snmpfinger \
-	%{buildroot}%{_bindir}/freeradius-web-snmpfinger
+    %{buildroot}%{_bindir}/freeradius-web-snmpfinger
 
 # fix a simple redirector
 cat > %{buildroot}%{_datadir}/%{name}-web/index.html << EOF
@@ -399,9 +420,10 @@ fi
 %_postun_userdel radius
 
 %files
-%doc doc COPYRIGHT CREDITS INSTALL LICENSE README
+%doc doc COPYRIGHT CREDITS INSTALL LICENSE README.rst
 %doc README.sql README.smb Readme.cram Standard.draft dictionary.sandy
-%{_initrddir}/radiusd
+%{_unitdir}/radiusd.service
+%{_prefix}/lib/tmpfiles.d/radiusd.conf
 %config(noreplace) %{_sysconfdir}/pam.d/radiusd
 %config(noreplace) %{_sysconfdir}/logrotate.d/radiusd
 %config(noreplace)  %{_sysconfdir}/sysconfig/radiusd
@@ -443,6 +465,7 @@ fi
 %config(noreplace) %{_sysconfdir}/raddb/sql/ndb/schema.sql
 %{_bindir}/radclient
 %{_bindir}/radconf2xml
+%{_bindir}/rad_counter
 %{_bindir}/radcrypt
 %{_bindir}/radeapclient
 %{_bindir}/radlast
@@ -462,7 +485,6 @@ fi
 %{_sbindir}/radwatch
 %attr(0755,radius,radius) %dir %{_localstatedir}/log/radius
 %attr(0755,radius,radius) %dir %{_localstatedir}/log/radius/radacct
-%attr(0755,radius,radius) %dir %{_localstatedir}/run/radiusd
 %attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radutmp
 %attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radwtmp
 %attr(0644,radius,radius) %ghost %{_localstatedir}/log/radius/radius.log
@@ -494,6 +516,10 @@ fi
 %files -n %{name}-sqlite
 %{_libdir}/%{name}/rlm_sql_sqlite.so
 
+%files -n %{name}-yubikey
+%dir %{_sysconfdir}/raddb/yubico
+%{_libdir}/%{name}/rlm_yubikey.so
+
 %files -n %{libname}
 %{_libdir}/%{name}/libfreeradius-radius.so.%{major}*
 %{_libdir}/%{name}/libfreeradius-eap.so.%{major}*
@@ -502,6 +528,7 @@ fi
 %{_libdir}/%{name}/rlm_always.so
 %{_libdir}/%{name}/rlm_attr_filter.so
 %{_libdir}/%{name}/rlm_attr_rewrite.so
+%{_libdir}/%{name}/rlm_cache.so
 %{_libdir}/%{name}/rlm_caching.so
 %{_libdir}/%{name}/rlm_chap.so
 %{_libdir}/%{name}/rlm_checkval.so
@@ -544,6 +571,7 @@ fi
 %{_libdir}/%{name}/rlm_radutmp.so
 %{_libdir}/%{name}/rlm_realm.so
 %{_libdir}/%{name}/rlm_replicate.so
+#%{_libdir}/%{name}/rlm_ruby.so
 %{_libdir}/%{name}/rlm_sim_files.so
 %{_libdir}/%{name}/rlm_smsotp.so
 %{_libdir}/%{name}/rlm_soh.so
@@ -555,7 +583,7 @@ fi
 %{_libdir}/%{name}/rlm_unix.so
 %{_libdir}/%{name}/rlm_wimax.so
 
-%files -n %{devname}
+%files -n %{develname}
 %doc todo
 %{multiarch_includedir}/freeradius/build-radpaths-h
 %{multiarch_includedir}/freeradius/radpaths.h
@@ -596,4 +624,3 @@ fi
 %{_bindir}/tot_stats
 %{_bindir}/truncate_radacct
 %{_datadir}/%{name}-web
-
