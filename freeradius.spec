@@ -204,6 +204,7 @@ perl -pi -e "s|\\\${bindir}|\\\${bindir}/|g" dialup_admin/Makefile
 
 export CFLAGS="$CFLAGS -fPIC -DLDAP_DEPRECATED"
 export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
+export PYTHONBIN=%{__python2}
 
 %configure2_5x \
     --with-gnu-ld \
@@ -244,6 +245,7 @@ export CXXFLAGS="$CXXFLAGS -fPIC -DLDAP_DEPRECATED"
     --without-rlm_sql_iodbc \
     --without-rlm_sql_oracle \
     --without-rlm_sql_sybase \
+    --without-rlm_ruby \
 
 # enable this one with a hack...
 perl -pi \
