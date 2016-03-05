@@ -144,7 +144,6 @@ Summary:	Web based administration interface for freeradius
 Group:		System/Servers
 Requires:	apache-mod_php
 Requires:	freeradius
-Requires:	php-mysql
 Requires:	net-snmp-mibs
 Requires:	net-snmp-utils
 Provides:	dialup_admin = %{version}-%{release}
