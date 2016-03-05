@@ -5,8 +5,8 @@ diff -Naur freeradius-server-2.2.3/src/modules/rlm_sql/drivers/rules.mak freerad
  	done
  
  $(TARGET).la: $(LT_OBJS)
--	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION_STRING) \
-+	$(LIBTOOL) --mode=link $(CC) -avoid-version \
+-	$(LIBTOOL) --mode=link --tag=CC $(CC) -release $(RADIUSD_VERSION_STRING) \
++	$(LIBTOOL) --mode=link --tag=CC $(CC) -avoid-version \
  	-module $(LINK_MODE) $(LDFLAGS) $(RLM_SQL_LDFLAGS) -o $@ \
  	-rpath $(libdir) $^ $(RLM_SQL_LIBS)
  
@@ -17,8 +17,8 @@ diff -Naur freeradius-server-2.2.3/src/modules/rules.mak freeradius-server-2.2.3
  	done
  
  $(TARGET).la: $(RLM_SUBDIRS) $(LT_OBJS)
--	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION_STRING) \
-+	$(LIBTOOL) --mode=link $(CC) -avoid-version \
+-	$(LIBTOOL) --mode=link --tag=CC $(CC) -release $(RADIUSD_VERSION_STRING) \
++	$(LIBTOOL) --mode=link --tag=CC $(CC) -avoid-version \
  	-module $(LINK_MODE) $(LDFLAGS) $(RLM_LDFLAGS) -o $@     \
  	-rpath $(libdir) $^ $(LIBRADIUS) $(RLM_LIBS) $(LIBS)
  

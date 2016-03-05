@@ -54,9 +54,9 @@ diff -Naur freeradius-server-2.2.3/raddb/eap.conf freeradius-server-2.2.3.oden/r
  			#
  			#  This can never exceed the size of a RADIUS
 @@ -235,7 +235,7 @@
- 			#  3) uncomment the line below.
- 			#  5) Restart radiusd
- 		#	check_crl = yes
+ 			# Check if intermediate CAs have been revoked.
+ 		#	check_all_crl = yes
+ 
 -			CA_path = ${cadir}
 +			CA_path = ${local_ssldir}
  

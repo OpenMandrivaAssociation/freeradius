@@ -7,8 +7,8 @@
 
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
-Version:	2.2.3
-Release:	4
+Version:	2.2.9
+Release:	1
 License:	GPLv2+
 Group:		System/Servers
 URL:		http://www.freeradius.org/
@@ -25,7 +25,6 @@ Source9:	rlm_yubikey.tar.gz
 # Fix certificate location
 Patch0:		freeradius-2.1.11-ssl-config.patch
 Patch1:		freeradius-server-2.1.6-fix-format-errors.patch
-Patch2:		freeradius-2.2.0-ruby1.9-dir.patch
 Patch4:		freeradius-0.8.1-use-system-com_err.patch
 Patch6:		freeradius-server-2.2.0-avoid-version.diff
 Patch7:		freeradius-server-2.1.10-version-info.diff
@@ -34,7 +33,6 @@ Patch9:		freeradius-server-2.1.8-ltdl_no_la.patch
 Patch10:	freeradius-server-linkage_fix.diff
 Patch11:	freeradius-server-2.1.7-fix-perl-scripts.patch
 Patch12:	freeradius-server-2.2.0-yubico-paths.diff
-Patch13:	freeradius-server-2.2.3-strfmt.diff
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
 BuildRequires:	sasl-devel
@@ -170,7 +168,6 @@ find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
 
 %patch0 -p1 -b .config
-%patch2 -p0 -b .ruby
 %patch4 -p1 -b .peroyvind
 %patch6 -p1 -b .avoid-version
 %patch7 -p1 -b .version-info
@@ -180,7 +177,6 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 %patch11 -p1 -b .file-temp
 %patch1 -p 1
 %patch12 -p0
-%patch13 -p0
 
 ./autogen.sh
 
