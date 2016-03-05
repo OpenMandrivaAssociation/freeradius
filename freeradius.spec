@@ -436,6 +436,7 @@ fi
 %config(noreplace) %{_sysconfdir}/raddb/hints
 %config(noreplace) %{_sysconfdir}/raddb/huntgroups
 %config(noreplace) %{_sysconfdir}/raddb/radiusd.conf
+%config(noreplace) %{_sysconfdir}/raddb/panic.gdb
 %config(noreplace) %{_sysconfdir}/raddb/policy.conf
 %config(noreplace) %{_sysconfdir}/raddb/policy.txt
 %config(noreplace) %{_sysconfdir}/raddb/proxy.conf
