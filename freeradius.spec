@@ -8,7 +8,7 @@
 Summary:	High-performance and highly configurable RADIUS server
 Name:		freeradius
 Version:	2.2.9
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		System/Servers
 URL:		http://www.freeradius.org/
