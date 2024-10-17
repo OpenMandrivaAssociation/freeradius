@@ -11,7 +11,7 @@ Version:	2.2.9
 Release:	4
 License:	GPLv2+
 Group:		System/Servers
-URL:		http://www.freeradius.org/
+URL:		https://www.freeradius.org/
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz
 Source1:	ftp://ftp.freeradius.org/pub/radius/%{name}-server-%{version}.tar.gz.sig
 Source2:	freeradius.pam-0.77
