@@ -1,7 +1,2 @@
-removed_sources:
-  freeradius-server-2.1.12.tar.bz2: d80760f5ca854225e262954ce2505c22ef5fc6b2
-  freeradius-server-2.2.3.tar.gz: 5e98dde6ed49fb15274e596a0068879e1a424e92
 sources:
-  freeradius-server-2.2.9.tar.gz: e2cbb9a1d5cdedc657ead222b510a23350681282
-  freeradius-server-2.2.9.tar.gz.sig: 4407bab6765c79818f3b31879120da4e4bd22292
-  rlm_yubikey.tar.gz: 511da900bbd9d9f3a0e7a7511b4625bc7b06370b
+  freeradius-server-3.2.7.tar.bz2: b626c4da9a901f5a369295a05093f83fc129b22d

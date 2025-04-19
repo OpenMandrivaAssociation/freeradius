@@ -1,11 +1,11 @@
 [Unit]
 Description=FreeRADIUS high performance RADIUS server.
-After=syslog.target network.target
+After=syslog.target network-online.target ipa.service dirsrv.target krb5kdc.service mysql.service mariadb.service postgresql.service
 
 [Service]
 Type=forking
-PIDFile=/run/radiusd/radiusd.pid
-ExecStartPre=-/bin/chown -R radiusd.radiusd /run/radiusd
+PIDFile=/var/run/radiusd/radiusd.pid
+ExecStartPre=-/bin/chown -R radiusd.radiusd /var/run/radiusd
 ExecStartPre=/usr/sbin/radiusd -C
 ExecStart=/usr/sbin/radiusd -d /etc/raddb
 ExecReload=/usr/sbin/radiusd -C
