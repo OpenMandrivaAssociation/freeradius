@@ -29,6 +29,9 @@ Patch10: freeradius-no-sqlippool-tool.patch
 
 %global docdir %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
 BuildRequires: autoconf
 BuildRequires: make
 BuildRequires: gdbm-devel
