@@ -3,7 +3,7 @@
 Summary: High-performance and highly configurable free RADIUS server
 Name: freeradius
 Version: 3.2.7
-Release:	4
+Release:	5
 License: GPL-2.0-or-later AND LGPL-2.0-or-later
 URL: http://www.freeradius.org/
 
@@ -26,6 +26,7 @@ Patch7: freeradius-ease-openssl-version-check.patch
 Patch8: freeradius-configure-c99.patch
 Patch9: freeradius-openssl-no-engine.patch
 Patch10: freeradius-no-sqlippool-tool.patch
+Patch11: freeradius-openssl3-asn1-opaque.patch
 
 %global docdir %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 
@@ -218,6 +219,7 @@ This plugin provides Memcached support for the FreeRADIUS server project.
 %patch -P8 -p1
 %patch -P9 -p1
 %patch -P10 -p1
+%patch -P11 -p1
 
 %build
 # Force compile/link options, extra security for network facing daemon
