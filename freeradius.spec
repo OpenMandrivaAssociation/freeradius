@@ -59,7 +59,7 @@ BuildRequires: ykclient-devel
 
 # Require OpenSSL version we built with, or newer, to avoid startup failures
 # due to runtime OpenSSL version checks.
-Requires: openssl >= %(rpm -q --queryformat '%%{VERSION}' openssl)
+Requires: openssl >= 4.0.2
 # Needed for certificate generation as upstream bootstrap script isn't
 # compatible with Makefile equivalent.
 Requires: make
