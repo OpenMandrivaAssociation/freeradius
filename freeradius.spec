@@ -3,8 +3,9 @@
 Summary: High-performance and highly configurable free RADIUS server
 Name: freeradius
 Version: 3.2.7
-Release:	5
+Release:	6
 License: GPL-2.0-or-later AND LGPL-2.0-or-later
+Group: Development/Other
 URL: http://www.freeradius.org/
 
 %global dist_base freeradius-server-%{version}
